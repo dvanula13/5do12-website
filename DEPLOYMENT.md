@@ -1,20 +1,25 @@
 # Publishing 5do12.de
 
-Prepared 31 October 2026. This is an official-domain launch plan; the public GitHub Pages preview is live at https://dvanula13.github.io/5do12-website/. **Legal pages remain incomplete drafts and 5do12.de is not connected.** No custom-domain CNAME file or automatic deployment workflow is included yet.
+Prepared 31 October 2026. This is an official-domain launch plan; the public preview is now associated with **5do12.de**. **Legal pages remain incomplete drafts. Domain ownership and DNS are configured; HTTPS certificate provisioning is pending.** A root CNAME file is tracked; no custom deployment workflow is needed.
 
 ## Verified preview state
 
 - Repository: public, separate from the app/game projects; default branch `main`.
-- Pages: deploy from `main`, `/(root)`; default-domain HTTPS enforced.
+- Pages: deploy from `main`, `/(root)`; custom domain `5do12.de`. The former GitHub Pages URL redirects to the custom domain. HTTPS enforcement is waiting for certificate availability.
 - Initial deployment succeeded: [Pages run #1](https://github.com/dvanula13/5do12-website/actions/runs/41230723128), source commit `4ff76cf`.
 - Live homepage, QR image and both legal draft pages opened successfully. Both PayPal links match the QR payload; the actual PayPal page opens with the intended support description.
 - QR independently decoded at original size and at 240, 276 and 360 pixels. Desktop and 390-pixel phone layouts checked.
 - No private address, private contact email, unrelated files or credentials included. Commit identity uses a GitHub no-reply email.
-- Custom domain field left empty. No IONOS DNS changes made. Legal pages are still incomplete; indexing is discouraged.
+- GitHub account-level ownership verification for `5do12.de` succeeded; keep its DNS TXT record in place. The verification value is not copied into source files.
+- IONOS parking-page A/AAAA records were replaced with all four GitHub A records at `@` (TTL 300). `www` is a CNAME to `dvanula13.github.io` (TTL 300). There is no apex AAAA record; the obsolete parking IPv6 address is removed.
+- IONOS mail MX, SPF, DKIM, DMARC, autodiscover, Domain Connect and nameservers were preserved. Before/after DNS records were saved locally outside this public repository.
+- Cloudflare and Google public DNS return all intended A records and the www CNAME. Direct GitHub HTTP response for the custom domain is 200. HTTPS is not yet verified; GitHub is provisioning its certificate.
+- The automatic CNAME commit was replaced on the main branch with identical files and a no-reply author identity.
+- Legal pages are still incomplete; indexing is discouraged. The preview label is not a legal exemption.
 
-## 1. Finish the launch requirements
+## 1. Complete the legal information for regular operation
 
-1. Complete the Impressum with the actual operator, appropriate service/business address, public email/contact method and other applicable details. A brand name alone is insufficient. Keep private information out until explicitly approved for publication. If a private home address must not be public, resolve a legally suitable alternative before launch.
+1. Assess the actual German operator and activity, then complete the Impressum with the actual operator, appropriate address, public email/contact method and other applicable details. A brand name alone is insufficient. Keep private information out until explicitly approved for publication. If a private home address must not be public, resolve a legally suitable alternative before launch.
 2. Complete the privacy notice for the actual operator, GitHub Pages hosting and PayPal support processing. Check the applicable legal basis, recipients, retention, transfers and contact details.
 3. Open the supplied PayPal link and check that the recipient, currency, amount options and terms are intended. The QR must decode to exactly the same URL. No transaction is required.
 4. Check hosting suitability: GitHub Pages is not permitted for a site primarily facilitating commercial transactions, e-commerce or commercial SaaS. This source is for an independent project introduction and voluntary support; reassess the final purpose before launch, especially before adding sales or paid services. Use another host if necessary.
@@ -28,7 +33,7 @@ Repository: `dvanula13/5do12-website`. Do not use an app/game repository.
 2. GitHub supplies a unique TXT value for `_github-pages-challenge-dvanula13.5do12.de`. In IONOS, go to **Domains & SSL → 5do12.de → DNS → Add record → TXT** and enter the hostname/value GitHub actually gives. Do not invent or commit a verification value.
 3. Wait for propagation, then verify in GitHub. Keep the TXT record after verification.
 4. For the public preview, use **repository settings → Pages → Build and deployment → Deploy from a branch**, choose `main` and `/(root)`, and save. This step publishes a preview at `https://dvanula13.github.io/5do12-website/`.
-5. Only after legal and official launch checks pass, add `5do12.de` in the repository's Pages **Custom domain** field and save **before pointing the domain's traffic to GitHub**. A branch deployment creates a root `CNAME` file; pull that change locally before editing again.
+5. After domain ownership verification, add `5do12.de` in the repository's Pages **Custom domain** field and save **before pointing the domain's traffic to GitHub**. A branch deployment creates a root `CNAME` file; pull that change locally before editing again.
 
 ## 3. Connect IONOS DNS
 
@@ -61,4 +66,6 @@ The CNAME target is the account hostname, without `https://` and without the rep
 - [German provider information requirements, § 5 DDG](https://www.gesetze-im-internet.de/ddg/__5.html)
 - [GitHub privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
 
-Recheck provider instructions when performing the eventual launch.
+Recheck provider instructions when changing the configuration. Working from home does not automatically require renting an office. An alternative public address must be suitable for the actual legal requirements; a mailbox or generic mail-forwarding service is not automatically sufficient.
+
+Address guidance: [IHK Munich](https://www.ihk-muenchen.de/ratgeber/recht/internetrecht/impressum/).

@@ -4,7 +4,7 @@ Independent apps, games and technology. A small, buildless static homepage with 
 
 **Release status: PUBLIC PREVIEW LIVE.**
 
-[Open the public preview](https://dvanula13.github.io/5do12-website/). The legal pages are explicit, incomplete drafts. The GitHub Pages preview is separate from the eventual official launch on 5do12.de. Complete and check the legal pages before the official launch. See DEPLOYMENT.md for the verified deployment state. `noindex` and `robots.txt` discourage indexing; they are not access controls.
+Custom domain: **5do12.de**. Domain ownership is verified and DNS is connected. HTTPS certificate provisioning is in progress; see DEPLOYMENT.md for the current verification state. The legal pages are explicit, incomplete drafts. The page remains a preview on the custom domain. Complete and check the legal pages for regular operation. A preview label does not exempt the site from applicable legal requirements. See DEPLOYMENT.md for the verified deployment state. `noindex` and `robots.txt` discourage indexing; they are not access controls.
 
 ## Files
 
