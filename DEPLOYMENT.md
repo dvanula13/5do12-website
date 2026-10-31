@@ -1,6 +1,16 @@
 # Publishing 5do12.de
 
-Prepared 31 October 2026. This is an official-domain launch plan; a public GitHub Pages preview is being prepared separately. **Legal pages remain incomplete drafts and 5do12.de is not connected.** No custom-domain CNAME file or automatic deployment workflow is included yet.
+Prepared 31 October 2026. This is an official-domain launch plan; the public GitHub Pages preview is live at https://dvanula13.github.io/5do12-website/. **Legal pages remain incomplete drafts and 5do12.de is not connected.** No custom-domain CNAME file or automatic deployment workflow is included yet.
+
+## Verified preview state
+
+- Repository: public, separate from the app/game projects; default branch `main`.
+- Pages: deploy from `main`, `/(root)`; default-domain HTTPS enforced.
+- Initial deployment succeeded: [Pages run #1](https://github.com/dvanula13/5do12-website/actions/runs/41230723128), source commit `4ff76cf`.
+- Live homepage, QR image and both legal draft pages opened successfully. Both PayPal links match the QR payload; the actual PayPal page opens with the intended support description.
+- QR independently decoded at original size and at 240, 276 and 360 pixels. Desktop and 390-pixel phone layouts checked.
+- No private address, private contact email, unrelated files or credentials included. Commit identity uses a GitHub no-reply email.
+- Custom domain field left empty. No IONOS DNS changes made. Legal pages are still incomplete; indexing is discouraged.
 
 ## 1. Finish the launch requirements
 
