@@ -9,7 +9,7 @@ Prepared 31 October 2026. This is an official-domain launch plan; the public pre
 - Initial deployment succeeded: [Pages run #1](https://github.com/dvanula13/5do12-website/actions/runs/41230723128), source commit `4ff76cf`.
 - Live homepage, QR image and both legal draft pages opened successfully. Both PayPal links match the QR payload; the actual PayPal page opens with the intended support description.
 - QR independently decoded at original size and at 240, 276 and 360 pixels. Desktop and 390-pixel phone layouts checked.
-- No private address, private contact email, unrelated files or credentials included. Commit identity uses a GitHub no-reply email.
+- The operator name, postal address and chosen public contact email are published in the two legal pages with explicit authorization. Other private contact details, unrelated files and credentials are excluded. Commit identity uses a GitHub no-reply email.
 - GitHub account-level ownership verification for `5do12.de` succeeded; keep its DNS TXT record in place. The verification value is not copied into source files.
 - IONOS parking-page A/AAAA records were replaced with all four GitHub A records at `@` (TTL 300). `www` is a CNAME to `dvanula13.github.io` (TTL 300). There is no apex AAAA record; the obsolete parking IPv6 address is removed.
 - IONOS mail MX, SPF, DKIM, DMARC, autodiscover, Domain Connect and nameservers were preserved. Before/after DNS records were saved locally outside this public repository.
