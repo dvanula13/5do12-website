@@ -1,6 +1,6 @@
 # Publishing 5do12.de
 
-Prepared 31 October 2026. This is a launch plan, not a record of completed deployment. **Pages must stay disabled while the legal pages are drafts.** No custom-domain CNAME file or automatic deployment workflow is included yet.
+Prepared 31 October 2026. This is an official-domain launch plan; a public GitHub Pages preview is being prepared separately. **Legal pages remain incomplete drafts and 5do12.de is not connected.** No custom-domain CNAME file or automatic deployment workflow is included yet.
 
 ## 1. Finish the launch requirements
 
@@ -17,8 +17,8 @@ Repository: `dvanula13/5do12-website`. Do not use an app/game repository.
 1. In GitHub **account settings → Pages → Add a domain**, enter `5do12.de`.
 2. GitHub supplies a unique TXT value for `_github-pages-challenge-dvanula13.5do12.de`. In IONOS, go to **Domains & SSL → 5do12.de → DNS → Add record → TXT** and enter the hostname/value GitHub actually gives. Do not invent or commit a verification value.
 3. Wait for propagation, then verify in GitHub. Keep the TXT record after verification.
-4. Only after the launch checks pass, use **repository settings → Pages → Build and deployment → Deploy from a branch**, choose `main` and `/(root)`, and save. This step publishes the site at `https://dvanula13.github.io/5do12-website/`.
-5. Add `5do12.de` in the repository's Pages **Custom domain** field and save **before pointing the domain's traffic to GitHub**. A branch deployment creates a root `CNAME` file; pull that change locally before editing again.
+4. For the public preview, use **repository settings → Pages → Build and deployment → Deploy from a branch**, choose `main` and `/(root)`, and save. This step publishes a preview at `https://dvanula13.github.io/5do12-website/`.
+5. Only after legal and official launch checks pass, add `5do12.de` in the repository's Pages **Custom domain** field and save **before pointing the domain's traffic to GitHub**. A branch deployment creates a root `CNAME` file; pull that change locally before editing again.
 
 ## 3. Connect IONOS DNS
 

@@ -2,7 +2,7 @@
 
 Independent apps, games and technology. A small, buildless static homepage with a voluntary PayPal support link and a matching, locally generated QR code.
 
-**Launch status: NOT READY.** The legal pages are explicit drafts. Keep GitHub Pages disabled until they are completed and checked. A public source repository does not mean the website has been launched. `noindex` and `robots.txt` discourage indexing; they are not access controls.
+**Release status: PUBLIC PREVIEW PREPARED.** The legal pages are explicit, incomplete drafts. The GitHub Pages preview is separate from the eventual official launch on 5do12.de. Complete and check the legal pages before the official launch. See DEPLOYMENT.md for the verified deployment state. `noindex` and `robots.txt` discourage indexing; they are not access controls.
 
 ## Files
 
