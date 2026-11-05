@@ -15,6 +15,10 @@ Custom domain: **5do12.de**. Domain ownership is verified and DNS is connected. 
 
 The button and QR link open the same supplied PayPal URL. Payment is handled on PayPal; nothing on this site collects payment details or promises charitable status. Confirm the recipient and terms on PayPal before launch. No test payment is necessary.
 
+## AdMob app verification
+
+`app-ads.txt` authorizes the existing 5do12 AdMob publisher for My Financial App. Publish this file at `https://5do12.de/app-ads.txt` and use `https://5do12.de/` as the app's developer website in Google Play. `robots.txt` permits crawlers to retrieve this file while continuing to discourage indexing of the preview site. AdMob verifies the public file after the store website link is available.
+
 ## Local preview
 
 Serve this folder with any local static web server. There is no install step, build command, backend, database, analytics or payment SDK. All local links work both under `/5do12-website/` and at the root of the future custom domain.
