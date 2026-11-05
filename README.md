@@ -4,7 +4,7 @@ Independent apps, games and technology. A small, buildless static homepage with 
 
 **Release status: PUBLIC PREVIEW LIVE.**
 
-Custom domain: **5do12.de**. Domain ownership is verified and DNS is connected. HTTPS certificate provisioning is in progress; see DEPLOYMENT.md for the current verification state. The legal pages contain the published operator/contact details and remain incomplete drafts pending the other legal checks. The page remains a preview on the custom domain. Complete and check the legal pages for regular operation. A preview label does not exempt the site from applicable legal requirements. See DEPLOYMENT.md for the verified deployment state. `noindex` and `robots.txt` discourage indexing; they are not access controls.
+Custom domain: **5do12.de**. Domain ownership is verified, DNS is connected, and HTTPS is active and enforced (verified 5 November 2026). The legal pages contain the published operator/contact details and remain incomplete drafts pending the other legal checks. The page remains a preview on the custom domain. Complete and check the legal pages for regular operation. A preview label does not exempt the site from applicable legal requirements. See DEPLOYMENT.md for the verified deployment state. `noindex` and `robots.txt` discourage indexing; they are not access controls.
 
 ## Files
 

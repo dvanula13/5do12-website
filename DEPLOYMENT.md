@@ -1,11 +1,11 @@
 # Publishing 5do12.de
 
-Prepared 31 October 2026. This is an official-domain launch plan; the public preview is now associated with **5do12.de**. **Legal pages remain incomplete drafts. Domain ownership and DNS are configured; HTTPS certificate provisioning is pending.** A root CNAME file is tracked; no custom deployment workflow is needed.
+Prepared 31 October 2026; hosting verification updated 5 November 2026. This is an official-domain launch plan; the public preview is now associated with **5do12.de**. **Legal pages remain incomplete drafts. Domain ownership and DNS are configured; HTTPS is active and enforced.** A root CNAME file is tracked; no custom deployment workflow is needed.
 
 ## Verified preview state
 
 - Repository: public, separate from the app/game projects; default branch `main`.
-- Pages: deploy from `main`, `/(root)`; custom domain `5do12.de`. The former GitHub Pages URL redirects to the custom domain. HTTPS enforcement is waiting for certificate availability.
+- Pages: deploy from `main`, `/(root)`; custom domain `5do12.de`. The former GitHub Pages URL redirects to the custom domain. GitHub reports DNS check successful; HTTPS enforcement enabled on 5 November 2026.
 - Initial deployment succeeded: [Pages run #1](https://github.com/dvanula13/5do12-website/actions/runs/41230723128), source commit `4ff76cf`.
 - Live homepage, QR image and both legal draft pages opened successfully. Both PayPal links match the QR payload; the actual PayPal page opens with the intended support description.
 - QR independently decoded at original size and at 240, 276 and 360 pixels. Desktop and 390-pixel phone layouts checked.
@@ -13,9 +13,16 @@ Prepared 31 October 2026. This is an official-domain launch plan; the public pre
 - GitHub account-level ownership verification for `5do12.de` succeeded; keep its DNS TXT record in place. The verification value is not copied into source files.
 - IONOS parking-page A/AAAA records were replaced with all four GitHub A records at `@` (TTL 300). `www` is a CNAME to `dvanula13.github.io` (TTL 300). There is no apex AAAA record; the obsolete parking IPv6 address is removed.
 - IONOS mail MX, SPF, DKIM, DMARC, autodiscover, Domain Connect and nameservers were preserved. Before/after DNS records were saved locally outside this public repository.
-- Cloudflare and Google public DNS return all intended A records and the www CNAME. Direct GitHub HTTP response for the custom domain is 200. HTTPS is not yet verified; GitHub is provisioning its certificate.
+- Cloudflare and Google public DNS return all intended A records and the www CNAME. HTTPS responses for the homepage, `app-ads.txt` and `robots.txt` verified as 200 with certificate validation enabled on 5 November 2026.
 - The automatic CNAME commit was replaced on the main branch with identical files and a no-reply author identity.
 - Legal pages are still incomplete; indexing is discouraged. The preview label is not a legal exemption.
+
+## AdMob verification setup — 5 November 2026
+
+- `https://5do12.de/app-ads.txt` serves `google.com, pub-5540236690935067, DIRECT, f08c47fec0942fa0`.
+- `robots.txt` allows `/app-ads.txt` while retaining the existing indexing restriction for the rest of the preview site.
+- The My Financial App Google Play store contact website was published as `https://5do12.de/`.
+- The existing AdMob app and ad unit IDs are retained. Request verification in AdMob after Google detects the updated store contact website; store metadata and crawler updates can take time to propagate.
 
 ## 1. Complete the legal information for regular operation
 
