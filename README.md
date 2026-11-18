@@ -1,10 +1,10 @@
 # 5do12 website
 
-The 5do12 public-preview website, focused on My Financial App and voluntary support. A buildless static site on GitHub Pages at **https://5do12.de/**.
+The 5do12 public-preview website, introducing website, web-app, Android-app and Windows-software development, with My Financial App as an example of the studio’s work and the existing voluntary support option. A buildless static site on GitHub Pages at **https://5do12.de/**.
 
 ## Design and content
 
-The homepage includes the live Google Play link, real MFApp screenshots with synthetic example records, a keyboard-accessible app preview, the studio story, the original PayPal support link and matching QR, FAQs and existing legal/app resources. Screenshots come from the existing MFApp store-assets capture; no testimonials, download claims or product results are fabricated.
+The homepage uses a dark navy, electric-blue and cyan palette with sans-serif typography, four service cards and direct project-enquiry email links. It includes the live Google Play link, real MFApp screenshots with synthetic example records, a keyboard-accessible app preview, the studio story, the original PayPal support link and matching QR, FAQs and existing legal/app resources. Screenshots come from the existing MFApp store-assets capture; no testimonials, download claims or product results are fabricated.
 
 All existing public document URLs, `app-ads.txt`, `CNAME`, `.nojekyll` and crawler settings are preserved. Website legal documents remain incomplete drafts and the public-preview/noindex notices remain in place. A preview label does not substitute for completing applicable legal requirements.
 
