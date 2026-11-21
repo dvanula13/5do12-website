@@ -27,3 +27,13 @@ GitHub Pages deploys `main` from the repository root. Keep the existing custom-d
 The website's legal drafts still require completion before regular operation. No new legal identifiers or operator details have been invented. No license has been selected for the website or branding; bundled fonts retain their own licenses.
 
 Deep Vein listing and privacy notice verified on 18 November 2026: https://play.google.com/store/apps/details?id=com.deepvein.miner and https://sites.google.com/view/deep-vein-5do12-privacy . The two copies of its terms now describe the current optional rewarded ads, cosmetic purchases and backup features. Store screenshots are copied unchanged; no additional tracking or third-party embeds were added.
+
+
+
+## English and German — 21 November 2026
+
+The language selector above the main navigation links to the English homepage (`index.html`) and the fully translated German homepage (`de.html`). It works without JavaScript. Update both pages together when changing homepage content, and keep their language, alternate links, accessibility labels and contact topics consistent.
+
+Public contact links and the existing contact references in the hosted information pages use `republikaborovo@gmail.com`. No custom email mailbox was purchased. The homepage preview banner was removed at the owner's request; the existing legal-page draft labels and crawler settings remain as they were.
+
+Gravitile promotion remains unpublished pending a confirmed download test. Its existing terms URL remains available.

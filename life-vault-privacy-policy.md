@@ -4,7 +4,7 @@ Effective date: 3 November 2026. This policy describes Life Vault version 0.1.0 
 
 ## Operator and contact
 
-Life Vault is developed and operated by 5do12, Dario Vorkapic, Grundwaldweg 11, 72270 Baiersbronn, Germany. For privacy questions or support, contact republikaborovo1@gmail.com.
+Life Vault is developed and operated by 5do12, Dario Vorkapic, Grundwaldweg 11, 72270 Baiersbronn, Germany. For privacy questions or support, contact republikaborovo@gmail.com.
 
 ## Records and documents
 
