@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Memory Match | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Memory Match</h1>
+<style>.t{width:70px;height:70px;font-size:34px;margin:0;background:var(--accent)}.t.up,.t.done{background:var(--bg);border:1px solid var(--line)}.t.done{opacity:.5}</style>
+<div class="card"><div class="stats">Moves <b id="mv">0</b> · Pairs <b id="pr">0</b>/8</div>
+<div class="grid board board-memory-match" id="g"></div><div class="msg" id="m"></div>
+<button class="alt" id="r">Shuffle</button></div>
+<script>
+const S='🍎🍌🍇🍉🍒🥝🍍🍑';let open=[],mv,pr,lock,flipTimer;const g=document.getElementById('g'),$=id=>document.getElementById(id);
+function reset(){clearTimeout(flipTimer);mv=pr=0;open=[];lock=false;$('mv').textContent=0;$('pr').textContent=0;$('m').textContent='';
+const d=[...S,...S].sort(()=>Math.random()-.5);g.innerHTML='';
+d.forEach(e=>{const t=document.createElement('button');t.className='t';t.dataset.e=e;t.onclick=()=>flip(t);g.appendChild(t)})}
+function flip(t){if(lock||t.classList.contains('up')||t.classList.contains('done'))return;t.classList.add('up');t.textContent=t.dataset.e;open.push(t);
+if(open.length===2){mv++;$('mv').textContent=mv;const[a,b]=open;
+if(a.dataset.e===b.dataset.e){a.classList.add('done');b.classList.add('done');open=[];pr++;$('pr').textContent=pr;if(pr===8)$('m').textContent=`🎉 Done in ${mv} moves!`}
+else{lock=true;flipTimer=setTimeout(()=>{[a,b].forEach(x=>{x.classList.remove('up');x.textContent=''});open=[];lock=false},700)}}}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

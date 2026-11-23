@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mine Field | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Mine Field</h1>
+<style>.q{width:34px;height:34px;margin:0;padding:0;font-size:16px;font-weight:700;border-radius:6px}.q.o{background:var(--bg);color:var(--ink);border:1px solid var(--line)}</style>
+<div class="card"><p class="muted">Tap to reveal. Use Flag mode or right-click to mark 10 mines.</p><div class="stats">Flags <b id="f">0</b>/10</div>
+<button class="alt" id="mode" type="button" aria-pressed="false">Flag mode</button><div class="grid board board-mine-field" id="g"></div><div class="msg" id="m"></div><button class="alt" id="r">New game</button></div>
+<script>
+const N=9,M=10,g=document.getElementById('g'),$=id=>document.getElementById(id);let mine,open,flag,first,over,flagMode=false,B=[];
+const nb=i=>{const r=Math.floor(i/N),c=i%N,o=[];for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const R=r+a,C=c+b;if((a||b)&&R>=0&&R<N&&C>=0&&C<N)o.push(R*N+C)}return o};
+const cnt=i=>nb(i).filter(j=>mine[j]).length;
+for(let i=0;i<N*N;i++){const b=document.createElement('button');b.className='q';b.onclick=()=>flagMode?tf(i):reveal(i);b.oncontextmenu=e=>{e.preventDefault();tf(i)};
+g.appendChild(b);B.push(b)}
+function tf(i){if(over||open[i])return;flag[i]=!flag[i];draw()}
+function reveal(i){if(over||flag[i]||open[i])return;if(first){first=false;const bad=new Set([i,...nb(i)]);let k=0;while(k<M){const j=Math.floor(Math.random()*N*N);if(!mine[j]&&!bad.has(j)){mine[j]=1;k++}}}
+if(mine[i]){over=true;$('m').textContent='💥 Boom! Try again.';open=open.map((v,j)=>v||!!mine[j]);draw();return}
+const st=[i];while(st.length){const j=st.pop();if(open[j])continue;open[j]=true;flag[j]=false;if(!cnt(j))st.push(...nb(j).filter(k=>!open[k]))}
+if(open.filter(Boolean).length===N*N-M){over=true;$('m').textContent='🎉 Field cleared!'}draw()}
+function draw(){B.forEach((b,i)=>{b.className='q'+(open[i]?' o':'');b.textContent=open[i]?(mine[i]?'💣':cnt(i)||''):flag[i]?'🚩':''});$('f').textContent=flag.filter(Boolean).length}
+function reset(){mine=Array(N*N).fill(0);open=Array(N*N).fill(false);flag=Array(N*N).fill(false);first=true;over=false;$('m').textContent='';draw()}
+$('mode').onclick=()=>setFlagMode(!flagMode);
+function setFlagMode(active){flagMode=active;$('mode').setAttribute('aria-pressed',String(active))}
+$('r').onclick=()=>{setFlagMode(false);reset()};reset();
+</script>
+
+</div></body></html>

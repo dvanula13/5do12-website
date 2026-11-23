@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Color Sequence | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Color Sequence</h1>
+<style>.p{width:120px;height:120px;margin:0;border-radius:16px;opacity:.45;transition:opacity .1s}.p.on{opacity:1}</style>
+<div class="card"><div class="stats">Level <b id="lv">0</b> · Best <b id="best">0</b></div>
+<div class="grid board board-color-sequence" id="g"></div><div class="msg" id="m">Watch, then repeat.</div><button id="go">Start</button></div>
+<script>
+const C=['#e74c3c','#2ecc71','#3498db','#f1c40f'],g=document.getElementById('g'),$=id=>document.getElementById(id);let seq=[],pos=0,lock=true,best=0,P=[];
+C.forEach((c,i)=>{const b=document.createElement('button');b.className='p';b.style.background=c;b.onclick=()=>press(i);g.appendChild(b);P.push(b)});
+const flash=(i,ms=350)=>new Promise(r=>{P[i].classList.add('on');setTimeout(()=>{P[i].classList.remove('on');setTimeout(r,150)},ms)});
+async function next(){lock=true;seq.push(Math.floor(Math.random()*4));pos=0;$('lv').textContent=seq.length;$('m').textContent='Watch...';
+await new Promise(r=>setTimeout(r,500));for(const i of seq)await flash(i);lock=false;$('m').textContent='Your turn'}
+function press(i){if(lock)return;flash(i,150);if(i!==seq[pos]){lock=true;$('m').textContent=`❌ Wrong! You reached level ${seq.length}.`;$('go').disabled=false;return}
+pos++;if(pos===seq.length){if(seq.length>best){best=seq.length;$('best').textContent=best}lock=true;setTimeout(next,600)}}
+$('go').onclick=()=>{seq=[];$('go').disabled=true;next()};
+</script>
+
+</div></body></html>

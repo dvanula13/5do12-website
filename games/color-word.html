@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Color Word | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Color Word</h1>
+<div class="card"><p class="muted">Click the <b>ink color</b> of the word, not what it says!</p>
+<div class="stats">Score <b id="s">0</b> · Time <b id="t">30</b> · Best <b id="b">0</b></div>
+<div class="big" id="w" style="font-size:56px">READY</div><div class="row" id="opts"></div><div class="msg" id="m"></div><button id="go">Start</button></div>
+<script>
+const C={RED:'#e74c3c',BLUE:'#3498db',GREEN:'#27ae60',YELLOW:'#f1c40f',PURPLE:'#9b59b6'},K=Object.keys(C),$=id=>document.getElementById(id);let ink,sc,tl,iv,on=false,best=0;
+K.forEach(k=>{const b=document.createElement('button');b.textContent=k;b.style.background=C[k];b.onclick=()=>pick(k);$('opts').appendChild(b)});
+const r=()=>K[Math.floor(Math.random()*K.length)];
+function next(){const w=r();do ink=r();while(ink===w&&Math.random()<.7);$('w').textContent=w;$('w').style.color=C[ink]}
+function pick(k){if(!on)return;if(k===ink){sc++;$('m').textContent='✅'}else{sc=Math.max(0,sc-1);$('m').textContent='❌'}$('s').textContent=sc;next()}
+$('go').onclick=()=>{sc=0;tl=30;on=true;$('s').textContent=0;$('t').textContent=30;$('go').disabled=true;next();
+iv=setInterval(()=>{tl--;$('t').textContent=tl;if(tl<=0){clearInterval(iv);on=false;$('w').textContent='TIME';$('w').style.color='';$('m').textContent=`Final score: ${sc}`;if(sc>best){best=sc;$('b').textContent=sc}$('go').disabled=false}},1000)};
+</script>
+
+</div></body></html>

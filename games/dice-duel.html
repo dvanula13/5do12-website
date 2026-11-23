@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dice Duel | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Dice Duel</h1>
+<style>.d{font-size:80px;line-height:1}</style>
+<div class="card"><div class="stats">You <b id="ys">0</b> · CPU <b id="cs">0</b> · First to 5</div>
+<div class="row" style="gap:40px"><div><div class="muted">You</div><div class="d" id="yd">🎲</div></div><div><div class="muted">CPU</div><div class="d" id="cd">🎲</div></div></div>
+<div class="msg" id="m">Roll the dice!</div><button id="r">Roll</button></div>
+<script>
+const F='⚀⚁⚂⚃⚄⚅',$=id=>document.getElementById(id);let s=[0,0];
+$('r').onclick=()=>{if(s[0]>=5||s[1]>=5){s=[0,0];$('ys').textContent=0;$('cs').textContent=0}$('r').disabled=true;let k=0;
+const iv=setInterval(()=>{$('yd').textContent=F[Math.floor(Math.random()*6)];$('cd').textContent=F[Math.floor(Math.random()*6)];if(++k>10){clearInterval(iv);
+const y=1+Math.floor(Math.random()*6),c=1+Math.floor(Math.random()*6);$('yd').textContent=F[y-1];$('cd').textContent=F[c-1];
+if(y>c){s[0]++;$('m').textContent=`You win the round (${y} vs ${c})`}else if(c>y){s[1]++;$('m').textContent=`CPU wins the round (${c} vs ${y})`}else $('m').textContent='Tie, no point';
+$('ys').textContent=s[0];$('cs').textContent=s[1];if(s[0]>=5)$('m').textContent='🏆 You won the duel! Roll to play again';if(s[1]>=5)$('m').textContent='CPU won the duel. Roll to play again';$('r').disabled=false}},60)};
+</script>
+
+</div></body></html>

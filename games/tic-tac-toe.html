@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tic-Tac-Toe | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Tic-Tac-Toe</h1>
+<style>.c{width:90px;height:90px;font-size:44px;font-weight:700;background:var(--bg);color:var(--ink);border:1px solid var(--line);margin:0}</style>
+<div class="card"><div class="msg" id="m">You are ❌</div><div class="grid board board-tic-tac-toe" id="g"></div>
+<button class="alt" id="r">Restart</button></div>
+<script>
+const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let b,over;const g=document.getElementById('g'),m=document.getElementById('m');
+const win=(b)=>{for(const[x,y,z]of L)if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];return b.every(v=>v)?'T':null};
+function draw(){g.innerHTML='';b.forEach((v,i)=>{const c=document.createElement('button');c.className='c';c.textContent=v==='X'?'❌':v==='O'?'⭕':'';c.onclick=()=>play(i);g.appendChild(c)})}
+function end(){const w=win(b);if(!w)return false;over=true;m.textContent=w==='X'?'🎉 You win!':w==='O'?'CPU wins':'Draw';return true}
+function cpu(){const free=b.map((v,i)=>v?null:i).filter(v=>v!==null);
+for(const p of['O','X'])for(const i of free){const t=[...b];t[i]=p;if(win(t)===p)return i}
+if(!b[4])return 4;return free[Math.floor(Math.random()*free.length)]}
+function play(i){if(over||b[i])return;b[i]='X';if(!end()){b[cpu()]='O';end()}draw()}
+function reset(){b=Array(9).fill(null);over=false;m.textContent='You are ❌';draw()}
+document.getElementById('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

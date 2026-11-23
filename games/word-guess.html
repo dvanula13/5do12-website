@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Word Guess | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Word Guess</h1>
+<style>.k{width:38px;padding:8px 0;margin:2px}#w{letter-spacing:10px;font-family:monospace}</style>
+<div class="card"><div class="stats">Lives <b id="lv">6</b></div><div class="big" id="w"></div><div class="msg" id="m">Guess the word, one letter at a time.</div>
+<div id="kb"></div><button class="alt" id="r" style="margin-top:10px">New word</button></div>
+<script>
+const W=['planet','garden','rocket','puzzle','banana','castle','jungle','window','pirate','dragon','silver','travel','monkey','cookie','island','winter','guitar','candle','forest','bridge'];
+let w,got,lives,done;const $=id=>document.getElementById(id);
+function show(){$('w').textContent=[...w].map(c=>got.has(c)?c.toUpperCase():'_').join('');$('lv').textContent=lives}
+function reset(){w=W[Math.floor(Math.random()*W.length)];got=new Set;lives=6;done=false;$('m').textContent='Guess the word, one letter at a time.';
+$('kb').innerHTML='';for(const l of'abcdefghijklmnopqrstuvwxyz'){const b=document.createElement('button');b.className='k';b.textContent=l.toUpperCase();b.onclick=()=>pick(l,b);b.id='k'+l;$('kb').appendChild(b)}show()}
+function pick(l,b){if(done||got.has(l))return;got.add(l);b.disabled=true;if(!w.includes(l))lives--;show();
+if([...w].every(c=>got.has(c))){done=true;$('m').textContent='🎉 You got it!'}else if(lives<=0){done=true;$('m').textContent='💀 It was '+w.toUpperCase();$('w').textContent=w.toUpperCase()}}
+addEventListener('keydown',e=>{const l=e.key.toLowerCase();if(/^[a-z]$/.test(l)&&$('k'+l))pick(l,$('k'+l))});
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

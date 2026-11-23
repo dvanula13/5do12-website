@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Click Speed | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Click Speed</h1>
+<style>#z{width:100%;height:220px;font-size:26px;border-radius:14px;margin:0}</style>
+<div class="card"><div class="stats">Clicks <b id="c">0</b> · Time <b id="t">5.0</b> · Best <b id="b">–</b></div>
+<button id="z">Click here to start!</button><div class="msg" id="m"></div></div>
+<script>
+const $=id=>document.getElementById(id);let n=0,st='idle',t0,iv,best=0;
+$('z').onclick=()=>{if(st==='done')return;if(st==='idle'){st='run';n=0;t0=performance.now();$('m').textContent='';
+iv=setInterval(()=>{const left=5-(performance.now()-t0)/1000;$('t').textContent=Math.max(0,left).toFixed(1);if(left<=0){clearInterval(iv);st='done';const cps=(n/5).toFixed(1);
+$('m').textContent=`${n} clicks = ${cps} per second`;if(n>best){best=n;$('b').textContent=n}$('z').textContent='Wait...';setTimeout(()=>{st='idle';$('z').textContent='Click to try again'},1200)}},50)}
+n++;$('c').textContent=n;if(st==='run')$('z').textContent='Click! Click! Click!'};
+</script>
+
+</div></body></html>

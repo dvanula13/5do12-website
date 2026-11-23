@@ -100,3 +100,24 @@ html[lang="de"] .service-card>a{overflow-wrap:anywhere}
 html[lang="de"] .game-copy .button{white-space:normal}
 .footer-main nav a[href^="mailto:"]{overflow-wrap:anywhere}
 @media(max-width:760px){.language-bar{padding-block:.375rem}.language-label{margin-right:.25rem}.language-switcher{gap:.125rem}.language-switcher a{padding:.625rem .75rem}html[lang="de"] .site-nav{gap:0}}
+
+.language-bar > .online-games-link {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-right: auto;
+  padding: .4rem .75rem;
+  border: 1px solid #31546d;
+  border-radius: 6px;
+  color: var(--accent);
+  background: #142c42;
+  font-size: .875rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.language-bar > .online-games-link:hover { border-color: var(--accent); color: var(--accent-hover); }
+@media (max-width: 480px) {
+  .language-bar:has(.online-games-link) .language-label { display: none; }
+}

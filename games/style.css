@@ -1,0 +1,82 @@
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:12px;margin:8px 0 16px}
+header a{color:var(--muted);text-decoration:none;font-size:14px}
+header a:hover{color:var(--accent)}
+h1{font-size:26px;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center}
+.muted{color:var(--muted)}
+.big{font-size:40px;font-weight:700;margin:8px 0}
+.msg{min-height:28px;font-weight:600;margin:10px 0}
+button,.btn{font:inherit;background:var(--accent);color:#080e1a;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin:4px;transition:transform .08s,opacity .15s}
+button:hover{opacity:.9}button:active{transform:scale(.96)}
+button.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:disabled{opacity:.4;cursor:default}
+input[type=text],input[type=number]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:160px;text-align:center}
+canvas{background:var(--bg);border:1px solid var(--line);border-radius:10px;max-width:100%;touch-action:none}
+.grid{display:grid;gap:8px;margin:12px auto;justify-content:center}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.stats{display:flex;justify-content:center;gap:20px;color:var(--muted);font-size:14px;margin-bottom:8px}
+.stats b{color:var(--ink)}
+/* hub */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,155px),1fr));gap:12px}
+.games a{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--ink);text-decoration:none;transition:transform .12s,border-color .12s}
+.games a:hover{transform:translateY(-3px);border-color:var(--accent)}
+.games .ico{font-size:32px}.games .t{font-weight:700;margin-top:6px}.games .d{font-size:13px;color:var(--muted)}
+
+@font-face {
+  font-family: Instrument;
+  src: url('../assets/fonts/InstrumentSans.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #080e1a;
+  --card: #111f34;
+  --ink: #eff5ff;
+  --muted: #a5b5cf;
+  --accent: #69e2ef;
+  --accent2: #ff857b;
+  --ok: #65db9a;
+  --line: #304764;
+}
+
+body { font-family: Instrument, 'Segoe UI', sans-serif; }
+.arcade { max-width: 1020px; padding-bottom: 44px; }
+.game-top { justify-content: space-between; gap: 12px; min-height: 56px; margin: 2px 0 24px; }
+.game-top a { text-decoration: none; }
+.game-top .arcade-brand { color: var(--ink); font-size: 25px; font-weight: 700; letter-spacing: -.045em; }
+.arcade-brand span { color: var(--accent); }
+.arcade-return { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; }
+.arcade h1 { font-size: clamp(34px, 7vw, 56px); letter-spacing: -.045em; line-height: 1.1; }
+.arcade-intro { margin: 8px 0 22px; }
+.game-title { margin-bottom: 16px; }
+.games a:hover { background: #152943; }
+.games .ico { line-height: 1.2; }
+.games .t, .games .d { display: block; }
+.stats { flex-wrap: wrap; gap: 4px 10px; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent2); outline-offset: 3px; }
+button.alt[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.board { width: 100%; grid-template-columns: repeat(var(--columns), minmax(0, 1fr)); }
+.board > button { width: 100%; height: auto; aspect-ratio: 1; padding: 0; font-size: clamp(14px, 5vw, 32px); }
+.board-color-sequence { --columns: 2; max-width: 248px; gap: 8px; }
+.board-connect-four { --columns: 7; max-width: 354px; gap: 5px; padding: 8px; }
+.board-lights-out { --columns: 5; max-width: 352px; gap: 8px; }
+.board-memory-match { --columns: 4; max-width: 304px; gap: 8px; }
+.board-mine-field { --columns: 9; max-width: 330px; gap: 3px; }
+.board-sliding-puzzle { --columns: 4; max-width: 312px; gap: 8px; }
+.board-tic-tac-toe { --columns: 3; max-width: 286px; gap: 8px; }
+.board-whack-a-mole { --columns: 3; max-width: 286px; gap: 8px; }
+.board-mine-field > button { font-size: clamp(12px, 4vw, 16px); }
+@media (max-width: 480px) {
+  .card { padding: 12px; }
+  .card .big { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .games a, button { transition: none; }
+  .games a:hover { transform: none; }
+}

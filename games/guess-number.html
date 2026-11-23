@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guess the Number | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Guess the Number</h1>
+<div class="card"><p class="muted">I'm thinking of a number from 1 to 100.</p>
+<div class="row"><input type="number" id="g" min="1" max="100" placeholder="?"><button id="b">Guess</button></div>
+<div class="msg" id="m"></div><div class="stats">Tries: <b id="t">0</b> Best: <b id="best">–</b></div>
+<button class="alt" id="r">New game</button></div>
+<script>
+let n,t,best=null;const $=id=>document.getElementById(id);
+function reset(){n=1+Math.floor(Math.random()*100);t=0;$('t').textContent=0;$('m').textContent='';$('g').value='';$('b').disabled=false;$('g').focus()}
+function guess(){if($('b').disabled)return;const v=+$('g').value;if(!Number.isInteger(v)||v<1||v>100){$('m').textContent='Enter 1–100';return}
+t++;$('t').textContent=t;
+if(v===n){$('m').textContent=`🎉 Got it in ${t}!`;$('b').disabled=true;if(best===null||t<best){best=t;$('best').textContent=t}}
+else $('m').textContent=v<n?'⬆ Higher':'⬇ Lower';$('g').select()}
+$('b').onclick=guess;$('g').onkeydown=e=>{if(e.key==='Enter')guess()};$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

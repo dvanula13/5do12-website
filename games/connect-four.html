@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Four in a Row | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Four in a Row</h1>
+<style>.board-connect-four{background:#2b526e;border-radius:12px}.h{width:44px;height:44px;border-radius:50%;background:var(--bg);margin:0;padding:0}.h.p{background:#e74c3c}.h.c{background:#f1c40f}</style>
+<div class="card"><div class="msg" id="m">You are 🔴 — click a column</div><div class="grid board board-connect-four" id="g"></div><br><button class="alt" id="r">Restart</button></div>
+<script>
+const R=6,C=7,g=document.getElementById('g'),m=document.getElementById('m');let b,over,H=[];
+for(let r=0;r<R;r++)for(let c=0;c<C;c++){const h=document.createElement('button');h.className='h';h.onclick=()=>play(c);g.appendChild(h);H.push(h)}
+const drop=(bd,c,p)=>{for(let r=R-1;r>=0;r--)if(!bd[r][c]){bd[r][c]=p;return r}return -1};
+function wins(bd,p){for(let r=0;r<R;r++)for(let c=0;c<C;c++)for(const[dr,dc]of[[0,1],[1,0],[1,1],[1,-1]]){let k=0;for(;k<4;k++){const y=r+dr*k,x=c+dc*k;if(y<0||y>=R||x<0||x>=C||bd[y][x]!==p)break}if(k===4)return true}return false}
+const cols=bd=>[...Array(C).keys()].filter(c=>!bd[0][c]);
+function cpu(){const v=cols(b);for(const p of['c','p'])for(const c of v){const t=b.map(r=>[...r]);drop(t,c,p);if(wins(t,p))return c}
+const safe=v.filter(c=>{const t=b.map(r=>[...r]);drop(t,c,'c');return!cols(t).some(c2=>{const u=t.map(r=>[...r]);drop(u,c2,'p');return wins(u,'p')})});
+const pool=safe.length?safe:v;pool.sort((a,b)=>Math.abs(a-3)-Math.abs(b-3)+Math.random()*2-1);return pool[0]}
+function draw(){b.flat().forEach((v,i)=>H[i].className='h'+(v?' '+v:''))}
+function play(c){if(over||b[0][c])return;drop(b,c,'p');if(wins(b,'p')){over=true;m.textContent='🎉 You win!'}else if(!cols(b).length){over=true;m.textContent='Draw'}
+else{drop(b,cpu(),'c');if(wins(b,'c')){over=true;m.textContent='CPU wins'}else if(!cols(b).length){over=true;m.textContent='Draw'}}draw()}
+function reset(){b=[...Array(R)].map(()=>Array(C).fill(null));over=false;m.textContent='You are 🔴 — click a column';draw()}
+document.getElementById('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

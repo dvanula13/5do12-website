@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rock Paper Scissors | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Rock Paper Scissors</h1>
+<div class="card"><div class="stats">You <b id="ys">0</b> · Ties <b id="ts">0</b> · CPU <b id="cs">0</b></div>
+<div class="big" id="show">✊ vs ✊</div><div class="msg" id="m">Make your move</div>
+<div class="row"><button data-i="0">✊ Rock</button><button data-i="1">✋ Paper</button><button data-i="2">✌️ Scissors</button></div></div>
+<script>
+const E=['✊','✋','✌️'],N=['Rock','Paper','Scissors'],s=[0,0,0],$=id=>document.getElementById(id);
+document.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const p=+b.dataset.i,c=Math.floor(Math.random()*3),d=(p-c+3)%3;
+$('show').textContent=E[p]+' vs '+E[c];
+if(d===0){s[1]++;$('m').textContent='Tie!'}else if(d===1){s[0]++;$('m').textContent=`You win — ${N[p]} beats ${N[c]}`}else{s[2]++;$('m').textContent=`CPU wins — ${N[c]} beats ${N[p]}`}
+$('ys').textContent=s[0];$('ts').textContent=s[1];$('cs').textContent=s[2]});
+</script>
+
+</div></body></html>

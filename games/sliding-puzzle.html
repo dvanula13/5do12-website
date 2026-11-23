@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sliding Puzzle | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Sliding Puzzle</h1>
+<style>.s{width:72px;height:72px;margin:0;font-size:26px;font-weight:700}.s.e{visibility:hidden}</style>
+<div class="card"><p class="muted">Slide tiles into order 1–15.</p><div class="stats">Moves <b id="mv">0</b></div>
+<div class="grid board board-sliding-puzzle" id="g"></div><div class="msg" id="m"></div><button class="alt" id="r">Shuffle</button></div>
+<script>
+const g=document.getElementById('g'),$=id=>document.getElementById(id);let t,mv;
+const nb=e=>[e-4,e+4,e%4?e-1:-1,e%4<3?e+1:-1].filter(i=>i>=0&&i<16);
+function draw(){g.innerHTML='';t.forEach((v,i)=>{const b=document.createElement('button');b.className='s'+(v?'':' e');b.textContent=v;b.onclick=()=>mov(i);g.appendChild(b)});
+$('mv').textContent=mv;$('m').textContent=t.every((v,i)=>v===(i+1)%16)&&mv?`🎉 Solved in ${mv} moves!`:''}
+function mov(i){const e=t.indexOf(0);if(!nb(e).includes(i)||(mv&&t.every((v,k)=>v===(k+1)%16)))return;[t[e],t[i]]=[t[i],t[e]];mv++;draw()}
+function reset(){t=[...Array(15)].map((_,i)=>i+1).concat(0);let e=15,p=-1;for(let k=0;k<300;k++){const o=nb(e).filter(x=>x!==p),n=o[Math.floor(Math.random()*o.length)];[t[e],t[n]]=[t[n],t[e]];p=e;e=n}mv=0;draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

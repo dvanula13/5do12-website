@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Whack-a-Mole | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Whack-a-Mole</h1>
+<style>.h{width:90px;height:90px;font-size:48px;margin:0;background:var(--bg);border:1px solid var(--line);border-radius:50%}</style>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Time <b id="t">30</b></div>
+<div class="grid board board-whack-a-mole" id="g"></div><div class="msg" id="m"></div><button id="go">Start</button></div>
+<script>
+const g=document.getElementById('g'),$=id=>document.getElementById(id);let holes=[],cur=-1,sc=0,tl,tm,mt,on=false;
+for(let i=0;i<9;i++){const h=document.createElement('button');h.className='h';h.onclick=()=>hit(i);g.appendChild(h);holes.push(h)}
+function pop(){if(cur>=0)holes[cur].textContent='';let n;do n=Math.floor(Math.random()*9);while(n===cur);cur=n;holes[n].textContent='🐹';mt=setTimeout(pop,Math.max(450,900-sc*15))}
+function hit(i){if(!on||i!==cur)return;sc++;$('s').textContent=sc;holes[i].textContent='💥';cur=-1;clearTimeout(mt);mt=setTimeout(pop,250)}
+$('go').onclick=()=>{sc=0;tl=30;on=true;$('s').textContent=0;$('t').textContent=30;$('m').textContent='';$('go').disabled=true;pop();
+tm=setInterval(()=>{tl--;$('t').textContent=tl;if(tl<=0){clearInterval(tm);clearTimeout(mt);on=false;holes.forEach(h=>h.textContent='');$('m').textContent=`Time! You whacked ${sc}.`;$('go').disabled=false}},1000)};
+</script>
+
+</div></body></html>

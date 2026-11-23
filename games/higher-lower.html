@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Higher or Lower | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Higher or Lower</h1>
+<div class="card"><div class="stats">Streak <b id="s">0</b> · Best <b id="b">0</b></div>
+<p class="muted">Numbers go from 1 to 13. Will the next one be higher or lower?</p>
+<div class="big" id="n" style="font-size:72px"></div><div class="msg" id="m"></div>
+<div class="row"><button id="hi">⬆ Higher</button><button id="lo">⬇ Lower</button></div></div>
+<script>
+const $=id=>document.getElementById(id);let cur,s=0,best=0;const R=()=>1+Math.floor(Math.random()*13);
+cur=R();$('n').textContent=cur;
+function g(up){let nx;do nx=R();while(nx===cur);const ok=up?nx>cur:nx<cur;
+$('m').textContent=`${nx} — ${ok?'✅ Correct':'❌ Wrong, streak reset'}`;s=ok?s+1:0;if(s>best){best=s;$('b').textContent=s}$('s').textContent=s;cur=nx;$('n').textContent=cur}
+$('hi').onclick=()=>g(true);$('lo').onclick=()=>g(false);
+</script>
+
+</div></body></html>

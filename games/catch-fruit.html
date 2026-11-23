@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catch the Fruit | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Catch the Fruit</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Lives <b id="l">3</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="400" height="460"></canvas><div class="msg" id="m">Move with mouse, touch, or ← →. Avoid 💣.</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id);let px=200,items,sc,lv,on=false,best=0,last,spawn,keys={};
+const F=['🍎','🍌','🍇','🍓','🍊'];
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();px=(e.clientX-r.left)*400/r.width});
+addEventListener('keydown',e=>keys[e.key]=1);addEventListener('keyup',e=>keys[e.key]=0);
+function loop(t){if(!on)return;const dt=Math.min(50,t-last)/16;last=t;if(keys.ArrowLeft)px-=7*dt;if(keys.ArrowRight)px+=7*dt;px=Math.max(35,Math.min(365,px));
+spawn-=dt;if(spawn<=0){items.push({x:20+Math.random()*360,y:-20,v:2+Math.random()*1.5+sc*.04,e:Math.random()<.2?'💣':F[Math.floor(Math.random()*5)]});spawn=Math.max(18,50-sc)}
+x.clearRect(0,0,400,460);x.font='30px serif';x.textAlign='center';
+items=items.filter(it=>{it.y+=it.v*dt;x.fillText(it.e,it.x,it.y);
+if(it.y>410&&it.y<440&&Math.abs(it.x-px)<40){if(it.e==='💣')lv--;else sc++;upd();return false}
+if(it.y>470){if(it.e!=='💣'){lv--;upd()}return false}return true});
+x.font='48px serif';x.fillText('🧺',px,450);if(lv<=0){on=false;$('m').textContent=`Game over! Score ${sc}`;$('go').disabled=false;return}requestAnimationFrame(loop)}
+function upd(){$('s').textContent=sc;$('l').textContent=lv;if(sc>best){best=sc;$('b').textContent=sc}}
+$('go').onclick=()=>{items=[];sc=0;lv=3;spawn=0;on=true;upd();$('m').textContent='';$('go').disabled=true;last=performance.now();requestAnimationFrame(loop)};
+</script>
+
+</div></body></html>

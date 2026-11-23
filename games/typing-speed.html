@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Typing Speed | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Typing Speed</h1>
+<style>#txt{font-size:20px;line-height:1.8;text-align:left;margin:10px 0}#txt .ok{color:var(--ok)}#txt .bad{color:var(--accent2);text-decoration:underline}#txt .cur{background:var(--line);border-radius:4px}#in{width:100%}</style>
+<div class="card"><div class="stats">Time <b id="t">30</b> · WPM <b id="wpm">0</b> · Best <b id="b">–</b></div>
+<div id="txt"></div><input type="text" id="in" placeholder="Start typing to begin..." autocomplete="off" autocapitalize="off" spellcheck="false">
+<div class="msg" id="m"></div><button class="alt" id="r">Restart</button></div>
+<script>
+const P='the quick sun went over hills while small birds sang songs near a quiet lake and kids ran home to eat warm bread with soft cheese then they read books about stars ships and maps until late at night when the moon was bright and the wind was calm'.split(' ');
+const $=id=>document.getElementById(id);let words,i,ok,t,iv,best=0,run;
+function render(){$('txt').innerHTML=words.map((w,k)=>`<span class="${k<i?(ok[k]?'ok':'bad'):k===i?'cur':''}">${w}</span>`).join(' ')}
+function reset(){words=[...P].sort(()=>Math.random()-.5).slice(0,40);i=0;ok=[];t=30;run=false;clearInterval(iv);$('t').textContent=30;$('wpm').textContent=0;$('m').textContent='';$('in').disabled=false;$('in').value='';$('in').focus();render()}
+function wpm(){return Math.round(ok.filter(Boolean).length/((30-t)/60||1))}
+$('in').oninput=e=>{if(!run){run=true;iv=setInterval(()=>{t--;$('t').textContent=t;$('wpm').textContent=wpm();if(t<=0){clearInterval(iv);$('in').disabled=true;const s=ok.filter(Boolean).length*2;$('wpm').textContent=s;$('m').textContent=`⏱ ${s} words per minute`;if(s>best){best=s;$('b').textContent=s}}},1000)}
+const v=$('in').value;if(v.endsWith(' ')){ok[i]=v.trim()===words[i];i++;$('in').value='';render();if(i>=words.length){words.push(...[...P].sort(()=>Math.random()-.5).slice(0,20));render()}}};
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

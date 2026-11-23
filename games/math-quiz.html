@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Math Sprint | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Math Sprint</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Time <b id="t">30</b> · Best <b id="b">0</b></div>
+<div class="big" id="q">Ready?</div><div class="row"><input type="number" id="a" placeholder="answer"></div>
+<div class="msg" id="m"></div><button id="go">Start</button></div>
+<script>
+const $=id=>document.getElementById(id);let ans,sc,tl,iv,on=false,best=0;const R=n=>1+Math.floor(Math.random()*n);
+function next(){const o='+-×'[Math.floor(Math.random()*3)];let a,b;if(o==='×'){a=R(12);b=R(12);ans=a*b}else if(o==='+'){a=R(50);b=R(50);ans=a+b}else{a=R(50);b=R(a);ans=a-b}
+$('q').textContent=`${a} ${o} ${b}`;$('a').value='';$('a').focus()}
+$('a').oninput=()=>{if(on&&+$('a').value===ans&&$('a').value!==''){sc++;$('s').textContent=sc;next()}};
+$('go').onclick=()=>{sc=0;tl=30;on=true;$('s').textContent=0;$('t').textContent=30;$('m').textContent='';$('go').disabled=true;next();
+iv=setInterval(()=>{tl--;$('t').textContent=tl;if(tl<=0){clearInterval(iv);on=false;$('q').textContent='Time!';$('m').textContent=`You solved ${sc}.`;if(sc>best){best=sc;$('b').textContent=sc}$('go').disabled=false}},1000)};
+</script>
+
+</div></body></html>

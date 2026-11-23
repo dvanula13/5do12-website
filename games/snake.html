@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Snake | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Snake</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Best <b id="best">0</b></div>
+<canvas id="c" width="400" height="400"></canvas><div class="msg" id="m">Arrow keys / WASD or swipe. Press Start.</div>
+<div class="row"><button id="go">Start</button></div>
+<div class="row" id="pad"><button class="alt" data-d="0,-1">▲</button><button class="alt" data-d="-1,0">◀</button><button class="alt" data-d="1,0">▶</button><button class="alt" data-d="0,1">▼</button></div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),N=20,Z=20,$=id=>document.getElementById(id);let sn,d,nd,f,sc,tm,best=0;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v);
+function place(){do{f={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(sn.some(p=>p.x===f.x&&p.y===f.y))}
+function start(){sn=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];d={x:1,y:0};nd=d;sc=0;$('s').textContent=0;$('m').textContent='';place();clearInterval(tm);tm=setInterval(step,110)}
+function setDir(a,b){if(a!==-d.x||b!==-d.y)nd={x:a,y:b}}
+function step(){d=nd;const h={x:sn[0].x+d.x,y:sn[0].y+d.y};
+if(h.x<0||h.y<0||h.x>=N||h.y>=N||sn.some(p=>p.x===h.x&&p.y===h.y)){clearInterval(tm);$('m').textContent='💥 Game over! Press Start.';return}
+sn.unshift(h);if(h.x===f.x&&h.y===f.y){sc++;$('s').textContent=sc;if(sc>best){best=sc;$('best').textContent=best}place()}else sn.pop();draw()}
+function draw(){x.clearRect(0,0,400,400);x.fillStyle=css('--accent2');x.fillRect(f.x*Z+3,f.y*Z+3,Z-6,Z-6);x.fillStyle=css('--ok');sn.forEach(p=>x.fillRect(p.x*Z+1,p.y*Z+1,Z-2,Z-2))}
+const K={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]};
+addEventListener('keydown',e=>{const k=K[e.key];if(k){e.preventDefault();setDir(...k)}});
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>setDir(...b.dataset.d.split(',').map(Number)));
+let ts;c.addEventListener('touchstart',e=>{ts=e.touches[0]});c.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-ts.clientX,dy=t.clientY-ts.clientY;if(Math.max(Math.abs(dx),Math.abs(dy))<12)return;Math.abs(dx)>Math.abs(dy)?setDir(Math.sign(dx),0):setDir(0,Math.sign(dy))});
+$('go').onclick=start;
+</script>
+
+</div></body></html>

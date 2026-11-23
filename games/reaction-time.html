@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reaction Time | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Reaction Time</h1>
+<style>#z{height:260px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;cursor:pointer;user-select:none;background:var(--accent)}</style>
+<div class="card"><div id="z">Click to start</div><div class="stats" style="margin-top:12px">Last <b id="l">–</b> · Best <b id="b">–</b></div></div>
+<script>
+const z=document.getElementById('z');let st='idle',t0,to,best=null;
+z.onmousedown=z.ontouchstart=e=>{e.preventDefault();
+if(st==='idle'||st==='done'){st='wait';z.style.background='#c0392b';z.textContent='Wait for green...';to=setTimeout(()=>{st='go';z.style.background='#27ae60';z.textContent='CLICK!';t0=performance.now()},1000+Math.random()*3000)}
+else if(st==='wait'){clearTimeout(to);st='done';z.style.background='var(--accent)';z.textContent='Too soon! Click to retry'}
+else if(st==='go'){const ms=Math.round(performance.now()-t0);st='done';z.style.background='var(--accent)';z.textContent=ms+' ms — click to retry';
+document.getElementById('l').textContent=ms+' ms';if(best===null||ms<best){best=ms;document.getElementById('b').textContent=ms+' ms'}}};
+</script>
+
+</div></body></html>
