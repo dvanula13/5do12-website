@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beat Lanes | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="beat-lanes"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Beat Lanes</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Combo <b id="cb">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="320" height="480"></canvas><div class="msg" id="m">Hit notes when they reach the line. Keys D F J K, or tap the lanes. Sound on! 🔊</div><button id="go">Play (45s)</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),LN=4,LW=80,HY=420,SPD=.32,COL=['#e74c3c','#f1c40f','#2ecc71','#3498db'],NOTE=[261.6,329.6,392,523.3];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let A,notes,t0,on=false,sc,combo,best=0,flash=[0,0,0,0],fb='',fbT=0,beat,nextBeat;const BPM=112,BEAT=60000/BPM,LEN=45000;
+function tone(f,d=.15,type='triangle',v=.2){if(!A||A.state!=='running')return;const o=A.createOscillator(),g=A.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,A.currentTime);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+d);o.connect(g).connect(A.destination);o.start();o.stop(A.currentTime+d)}
+function kick(){if(!A||A.state!=='running')return;const o=A.createOscillator(),g=A.createGain();o.frequency.setValueAtTime(140,A.currentTime);o.frequency.exponentialRampToValueAtTime(40,A.currentTime+.12);g.gain.setValueAtTime(.5,A.currentTime);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+.15);o.connect(g).connect(A.destination);o.start();o.stop(A.currentTime+.15)}
+function chart(){const n=[];let lastL=-1;for(let b=4;b<LEN/BEAT-1;b+=.5){const dens=b<16?.45:b<48?.6:.75;if(Math.random()<dens*(b%1?.6:1)){let l;do l=Math.floor(Math.random()*LN);while(l===lastL&&Math.random()<.6);lastL=l;n.push({t:b*BEAT,l,hit:false,miss:false});
+if(b>24&&Math.random()<.15){let l2=(l+2)%LN;n.push({t:b*BEAT,l:l2,hit:false,miss:false})}}}return n}
+function press(l){if(!on||l<0||l>=LN||performance.now()<t0)return;flash[l]=8;const now=performance.now()-t0;let best=null,bd=1e9;for(const n of notes)if(!n.hit&&!n.miss&&n.l===l){const d=Math.abs(n.t-now);if(d<bd){bd=d;best=n}}
+if(best&&bd<170){best.hit=true;combo++;const pts=bd<60?100:50;sc+=pts*(1+Math.floor(combo/10));fb=bd<60?'PERFECT':'GOOD';tone(NOTE[l]*(bd<60?2:1),.18)}else{combo=0;fb='MISS';tone(110,.1,'square',.08)}fbT=30;upd()}
+function upd(){$('s').textContent=sc;$('cb').textContent=combo}
+addEventListener('keydown',e=>{const i='dfjk'.indexOf(e.key.toLowerCase());if(i>=0&&!e.repeat)press(i)});
+c.addEventListener('pointerdown',e=>{const r=c.getBoundingClientRect();press(Math.floor((e.clientX-r.left)/r.width*LN))});
+function loop(){if(!on)return;const now=performance.now()-t0;if(now-nextBeat>BEAT)nextBeat=Math.floor(now/BEAT)*BEAT;while(nextBeat<=Math.min(now,LEN)){kick();if(Math.floor(nextBeat/BEAT)%2)tone(1800,.03,'square',.03);nextBeat+=BEAT}
+x.clearRect(0,0,320,480);for(let l=0;l<LN;l++){x.fillStyle=flash[l]>0?COL[l]+'44':(l%2?'#00000010':'#ffffff08');x.fillRect(l*LW,0,LW,480);if(flash[l]>0)flash[l]--}
+x.fillStyle=css('--ink');x.fillRect(0,HY-2,320,4);
+for(const n of notes){if(n.hit)continue;const y=HY-(n.t-now)*SPD;if(!n.miss&&n.t-now<-170){n.miss=true;combo=0;fb='MISS';fbT=30;upd()}if(y<-20||y>500)continue;
+x.fillStyle=n.miss?css('--muted'):COL[n.l];x.beginPath();x.roundRect(n.l*LW+8,y-10,LW-16,20,8);x.fill()}
+x.font='bold 13px system-ui';x.textAlign='center';x.fillStyle=css('--muted');'DFJK'.split('').forEach((k,l)=>x.fillText(k,l*LW+40,HY+30));
+if(fbT>0){fbT--;x.font='bold 28px system-ui';x.fillStyle=fb==='MISS'?'#e74c3c':fb==='PERFECT'?'#f1c40f':'#2ecc71';x.fillText(fb,160,240)}
+x.fillStyle=css('--accent');x.fillRect(0,0,320*Math.max(0,Math.min(1,now/LEN)),4);
+if(now>LEN+800){on=false;const hits=notes.filter(n=>n.hit).length;if(sc>best){best=sc;$('b').textContent=sc}$('m').textContent=`Song over! ${hits}/${notes.length} notes hit, score ${sc}.`;$('go').disabled=false;return}requestAnimationFrame(loop)}
+$('go').onclick=()=>{const Audio=window.AudioContext||window.webkitAudioContext;if(Audio){try{A=A||new Audio();A.resume().catch(()=>{})}catch{A=null}}flash.fill(0);fbT=0;notes=chart();sc=0;combo=0;upd();t0=performance.now()+1500;nextBeat=0;on=true;$('go').disabled=true;$('m').textContent='Get ready...';setTimeout(()=>$('m').textContent='',1500);requestAnimationFrame(loop)};
+</script>
+
+</div></body></html>

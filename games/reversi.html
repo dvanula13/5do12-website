@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reversi | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="reversi"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Reversi</h1>
+<style>#g{display:inline-grid;grid-template-columns:repeat(8,40px);gap:2px;background:#1e6b3a;padding:4px;border-radius:8px}.q{width:40px;height:40px;background:#2e8b4e;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.d{width:32px;height:32px;border-radius:50%;transition:background .25s}.d.k{background:#111}.d.w{background:#f4f4f4}.hint{width:10px;height:10px;border-radius:50%;background:#0004}</style>
+<div class="card"><div class="stats">You ⚫ <b id="ks">2</b> · CPU ⚪ <b id="ws">2</b></div><div id="g"></div><div class="msg" id="m">Your turn. Trap white discs between yours.</div><button class="alt" id="r">New game</button></div>
+<script>
+let cpuTimer;
+const $=id=>document.getElementById(id),D=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],WT=[[100,-20,10,5,5,10,-20,100],[-20,-50,-2,-2,-2,-2,-50,-20],[10,-2,1,1,1,1,-2,10],[5,-2,1,0,0,1,-2,5],[5,-2,1,0,0,1,-2,5],[10,-2,1,1,1,1,-2,10],[-20,-50,-2,-2,-2,-2,-50,-20],[100,-20,10,5,5,10,-20,100]];
+let b,turn,busy,cells=[];
+for(let i=0;i<64;i++){const d=document.createElement('div');d.className='q';d.onclick=()=>play(i>>3,i&7);$('g').appendChild(d);cells.push(d)}
+function flips(B,r,c,p){if(B[r][c])return[];const o=p==='k'?'w':'k',out=[];for(const[dr,dc]of D){const run=[];let y=r+dr,x=c+dc;while(y>=0&&y<8&&x>=0&&x<8&&B[y][x]===o){run.push([y,x]);y+=dr;x+=dc}
+if(run.length&&y>=0&&y<8&&x>=0&&x<8&&B[y][x]===p)out.push(...run)}return out}
+const moves=(B,p)=>{const m=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){const f=flips(B,r,c,p);if(f.length)m.push({r,c,f})}return m};
+function put(B,m,p){B[m.r][m.c]=p;m.f.forEach(([y,x])=>B[y][x]=p)}
+function draw(){const H=turn==='k'&&!busy?moves(b,'k'):[];cells.forEach((d,i)=>{const r=i>>3,c=i&7;d.innerHTML=b[r][c]?`<div class="d ${b[r][c]}"></div>`:H.some(m=>m.r===r&&m.c===c)?'<div class="hint"></div>':''});
+const n=p=>b.flat().filter(v=>v===p).length;$('ks').textContent=n('k');$('ws').textContent=n('w')}
+function play(r,c){if(turn!=='k'||busy)return;const m=moves(b,'k').find(m=>m.r===r&&m.c===c);if(!m)return;put(b,m,'k');turn='w';busy=true;draw();cpuTimer=setTimeout(cpu,500)}
+function score(B){let s=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++)s+=B[r][c]==='w'?WT[r][c]:B[r][c]==='k'?-WT[r][c]:0;return s+(moves(B,'w').length-moves(B,'k').length)*3}
+function cpu(){const M=moves(b,'w');if(M.length){let best=M[0],bs=-1e9;for(const m of M){const B=b.map(r=>[...r]);put(B,m,'w');const R=moves(B,'k');let worst=1e9;
+if(!R.length)worst=score(B)+30;for(const rm of R){const C=B.map(r=>[...r]);put(C,rm,'k');worst=Math.min(worst,score(C))}const s=worst+Math.random();if(s>bs){bs=s;best=m}}put(b,best,'w')}
+turn='k';busy=false;if(!moves(b,'k').length){if(!moves(b,'w').length){end();return}$('m').textContent='You have no moves — pass.';turn='w';busy=true;draw();cpuTimer=setTimeout(cpu,900);return}
+$('m').textContent=M.length?'Your turn.':'CPU passes. Your turn.';draw();if(!moves(b,'w').length&&!moves(b,'k').length)end()}
+function end(){draw();const k=b.flat().filter(v=>v==='k').length,w=b.flat().filter(v=>v==='w').length;turn=null;$('m').textContent=k>w?`🎉 You win ${k}–${w}!`:k<w?`CPU wins ${w}–${k}`:'Draw!'}
+function reset(){clearTimeout(cpuTimer);b=[...Array(8)].map(()=>Array(8).fill(null));b[3][3]=b[4][4]='w';b[3][4]=b[4][3]='k';turn='k';busy=false;$('m').textContent='Your turn. Trap white discs between yours.';draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

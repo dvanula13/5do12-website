@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Logic | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="pixel-logic"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Pixel Logic</h1>
+<style>#t{border-collapse:collapse;margin:8px auto}#t td{width:32px;height:32px;border:1px solid var(--line);padding:0;text-align:center;cursor:pointer}#t td.clue{cursor:default;border:0;font-size:12px;color:var(--muted);font-weight:700;line-height:1.1}
+#t td.rc{text-align:right;padding-right:6px;white-space:nowrap}#t td.cc{vertical-align:bottom;padding-bottom:4px}#t td.f{background:var(--ink)}#t td.x::after{content:'✕';color:var(--muted)}#t td.th{border-right:2px solid var(--ink)}#t tr.tb td:not(.clue){border-bottom:2px solid var(--ink)}#t td.done{color:var(--ok)}</style>
+<div class="card"><p class="muted">Numbers show the runs of filled squares in each row and column. Fill the picture!</p>
+<div class="row"><button id="mode">Mode: ⬛ Fill</button><button class="alt" id="r">New puzzle</button></div><table id="t"></table><div class="msg" id="m">Tip: right-click marks ✕ too.</div></div>
+<script>
+const N=8,$=id=>document.getElementById(id);let sol,cur,mode='f',won,down=null;
+const runs=a=>{const o=[];let n=0;for(const v of a){if(v)n++;else if(n){o.push(n);n=0}}if(n)o.push(n);return o.length?o:[0]};
+const row=(g,r)=>g.slice(r*N,r*N+N),col=(g,c)=>[...Array(N)].map((_,r)=>g[r*N+c]);
+function gen(){down=null;do sol=[...Array(N*N)].map(()=>Math.random()<.58?1:0);while(sol.filter(Boolean).length<28);cur=Array(N*N).fill(0);won=false;$('m').textContent='Tip: right-click marks ✕ too.';build()}
+function build(){const t=$('t');t.innerHTML='';const hr=t.insertRow();hr.insertCell().className='clue';
+for(let c=0;c<N;c++){const d=hr.insertCell();d.className='clue cc';d.id='cc'+c;d.innerHTML=runs(col(sol,c)).join('<br>')}
+for(let r=0;r<N;r++){const tr=t.insertRow();if(r===3)tr.className='tb';const rc=tr.insertCell();rc.className='clue rc';rc.id='rc'+r;rc.textContent=runs(row(sol,r)).join(' ');
+for(let c=0;c<N;c++){const d=tr.insertCell(),i=r*N+c;if(c===3)d.classList.add('th');d.id='p'+i;
+d.onpointerdown=e=>{e.preventDefault();const m=e.button===2?'x':mode;down=cur[i]===(m==='f'?1:2)?0:m==='f'?1:2;set(i)};d.onpointerenter=()=>{if(down!==null)set(i)};d.oncontextmenu=e=>e.preventDefault()}}draw()}
+addEventListener('pointerup',()=>down=null);addEventListener('pointercancel',()=>down=null);
+function set(i){if(won)return;cur[i]=down;draw();check()}
+function draw(){for(let i=0;i<N*N;i++){const d=$('p'+i);d.classList.toggle('f',cur[i]===1);d.classList.toggle('x',cur[i]===2)}
+const F=cur.map(v=>v===1?1:0);for(let k=0;k<N;k++){$('rc'+k).classList.toggle('done',runs(row(F,k))+''===runs(row(sol,k))+'');$('cc'+k).classList.toggle('done',runs(col(F,k))+''===runs(col(sol,k))+'')}}
+function check(){const F=cur.map(v=>v===1?1:0);for(let k=0;k<N;k++)if(runs(row(F,k))+''!==runs(row(sol,k))+''||runs(col(F,k))+''!==runs(col(sol,k))+'')return;won=true;$('m').textContent='🎉 Picture complete!'}
+$('mode').onclick=()=>{mode=mode==='f'?'x':'f';$('mode').textContent=mode==='f'?'Mode: ⬛ Fill':'Mode: ✕ Mark'};$('r').onclick=gen;gen();
+</script>
+
+</div></body></html>

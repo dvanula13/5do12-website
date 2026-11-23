@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hurdle Run | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="hurdle-run"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Hurdle Run</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="400" height="240"></canvas><div class="msg" id="m">Tap / Space / ↑ to jump. Jump again in the air for a double jump. Birds fly low — run under them!</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),G=200;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let p,obs,sp,sc,on=false,best=0,next,last;
+function jump(){if(!on)return;if(p.jumps<2){p.vy=p.jumps?-8:-9.5;p.jumps++}}
+c.addEventListener('pointerdown',e=>{e.preventDefault();jump()});addEventListener('keydown',e=>{if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();jump()}});
+function start(){p={y:G-26,vy:0,jumps:0};obs=[];sp=5;sc=0;next=60;on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function loop(t){if(!on)return;const dt=Math.min(50,t-last)/16;last=t;
+p.vy+=.55*dt;p.y+=p.vy*dt;if(p.y>=G-26){p.y=G-26;p.vy=0;p.jumps=0}
+next-=sp*dt;if(next<=0){if(Math.random()<.25&&sc>150)obs.push({x:420,y:G-70,w:34,h:18,bird:true});else{const h=26+Math.random()*30;obs.push({x:420,y:G-h,w:18+Math.random()*22,h})}
+next=180+Math.random()*220}
+sp=5+sc/400;sc+=sp*dt/5;
+x.clearRect(0,0,400,240);x.strokeStyle=css('--muted');x.beginPath();x.moveTo(0,G);x.lineTo(400,G);x.stroke();
+let dead=false;obs=obs.filter(o=>{o.x-=sp*dt;if(o.bird){x.font='26px serif';x.fillText('🐦',o.x,o.y+18)}else{x.fillStyle='#c0843d';x.fillRect(o.x,o.y,o.w,o.h)}
+if(60+4<o.x+o.w&&60+22>o.x&&p.y+4<o.y+o.h&&p.y+26>o.y)dead=true;return o.x>-50});
+x.fillStyle=css('--accent');x.fillRect(60,p.y,26,26);x.fillStyle='#fff';x.fillRect(76,p.y+6,5,5);
+$('s').textContent=Math.floor(sc);
+if(dead){on=false;if(sc>best){best=Math.floor(sc);$('b').textContent=best}$('m').textContent=`Ouch! Score ${Math.floor(sc)}`;$('go').disabled=false;$('go').textContent='Run again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

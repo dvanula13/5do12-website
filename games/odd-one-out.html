@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Odd One Out | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="odd-one-out"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Odd One Out</h1>
+<style>.e{margin:0;padding:0;background:transparent;border:0;line-height:1}</style>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Time <b id="t">30</b> · Best <b id="b">0</b></div>
+<div class="grid" id="g"></div><div class="msg" id="m">Find the emoji that's different.</div><button id="go">Start</button></div>
+<script>
+const P=[['😀','😃'],['🐶','🐱'],['🍎','🍅'],['⭐','🌟'],['🌲','🌳'],['🚗','🚙'],['😺','😸'],['🌕','🌝'],['🐵','🙈'],['💙','💜'],['🍏','🍐'],['⚽','🏀'],['🐟','🐠'],['🌼','🌻']];
+const $=id=>document.getElementById(id);let sc,tl,iv,on=false,best=0;
+function round(){const n=Math.min(8,3+Math.floor(sc/3)),[a,b]=P[Math.floor(Math.random()*P.length)].sort(()=>Math.random()-.5),odd=Math.floor(Math.random()*n*n),sz=Math.floor(300/n);
+$('g').style.setProperty('--columns',n);$('g').style.gap='0';$('g').innerHTML='';
+for(let i=0;i<n*n;i++){const e=document.createElement('button');e.className='e';e.style.fontSize=`min(${sz*.7}px, 7vw)`;e.textContent=i===odd?b:a;e.onclick=()=>{if(!on||tl<=0)return;
+if(i===odd){sc++;$('s').textContent=sc;round()}else{tl=Math.max(0,tl-2);$('t').textContent=tl;$('m').textContent='-2 seconds!'}};$('g').appendChild(e)}}
+$('go').onclick=()=>{sc=0;tl=30;on=true;$('s').textContent=0;$('t').textContent=30;$('m').textContent='';$('go').disabled=true;round();
+iv=setInterval(()=>{tl--;$('t').textContent=Math.max(0,tl);if(tl<=0){clearInterval(iv);on=false;$('m').textContent=`Time! Score ${sc}`;if(sc>best){best=sc;$('b').textContent=sc}$('go').disabled=false}},1000)};
+</script>
+
+</div></body></html>

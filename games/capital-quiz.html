@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Capital Quiz | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="capital-quiz"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Capital Quiz</h1>
+<style>.opt{display:block;width:100%;max-width:320px;margin:6px auto}.opt.good{background:var(--ok)}.opt.bad{background:var(--accent2)}</style>
+<div class="card"><div class="stats">Question <b id="q">0</b>/10 · Score <b id="s">0</b> · Best <b id="b">0</b></div>
+<div class="muted">What is the capital of</div><div class="big" id="c">…</div><div id="opts"></div><div class="msg" id="m"></div><button id="go">Start quiz</button></div>
+<script>
+const D=`France:Paris;Germany:Berlin;Italy:Rome;Spain:Madrid;Portugal:Lisbon;Croatia:Zagreb;Austria:Vienna;Hungary:Budapest;Poland:Warsaw;Greece:Athens;Norway:Oslo;Sweden:Stockholm;Finland:Helsinki;Denmark:Copenhagen;Ireland:Dublin;Netherlands:Amsterdam;Belgium:Brussels;Switzerland:Bern;Czechia:Prague;Slovenia:Ljubljana;Serbia:Belgrade;Romania:Bucharest;Bulgaria:Sofia;Turkey:Ankara;Egypt:Cairo;Kenya:Nairobi;Nigeria:Abuja;Morocco:Rabat;South Africa:Pretoria;Japan:Tokyo;China:Beijing;India:New Delhi;South Korea:Seoul;Thailand:Bangkok;Vietnam:Hanoi;Indonesia:Jakarta;Australia:Canberra;New Zealand:Wellington;Canada:Ottawa;United States:Washington, D.C.;Mexico:Mexico City;Brazil:Brasília;Argentina:Buenos Aires;Chile:Santiago;Peru:Lima;Colombia:Bogotá;Iceland:Reykjavík;Ukraine:Kyiv;Russia:Moscow;Iran:Tehran`.split(';').map(s=>s.split(':'));
+const $=id=>document.getElementById(id);let qs,qi,sc,best=0,lock;
+function ask(){lock=false;const[co,ca]=qs[qi];$('q').textContent=qi+1;$('c').textContent=co;$('m').textContent='';const wrong=D.filter(d=>d[1]!==ca).sort(()=>Math.random()-.5).slice(0,3).map(d=>d[1]);
+$('opts').innerHTML='';[ca,...wrong].sort(()=>Math.random()-.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>pick(b,o===ca,ca);$('opts').appendChild(b)})}
+function pick(b,ok,ca){if(lock)return;lock=true;if(ok){sc++;$('s').textContent=sc;b.classList.add('good');$('m').textContent='✅ Correct!'}else{b.classList.add('bad');[...$('opts').children].find(x=>x.textContent===ca).classList.add('good');$('m').textContent='❌ It was '+ca}
+setTimeout(()=>{qi++;if(qi<10)ask();else{$('opts').innerHTML='';$('c').textContent=sc===10?'🏆':'🌍';$('m').textContent=`You scored ${sc}/10!`;if(sc>best){best=sc;$('b').textContent=sc}$('go').style.display=''}},1100)}
+$('go').onclick=()=>{qs=[...D].sort(()=>Math.random()-.5).slice(0,10);qi=0;sc=0;$('s').textContent=0;$('go').style.display='none';ask()};
+</script>
+
+</div></body></html>

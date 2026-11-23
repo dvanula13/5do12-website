@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ring Escape | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="ring-escape"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Ring Escape</h1>
+<div class="card"><div class="stats">Time <b id="s">0.0</b>s · Best <b id="b">0.0</b>s</div>
+<canvas id="c" width="360" height="360"></canvas><div class="msg" id="m">Circle the center with ← → (or hold left/right half). Slip through the gaps in the closing rings.</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),CX=180,CY=180,PR=46;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let ang,rings,on=false,t,best=0,keys={},touch=0,last,spawn,rot;
+addEventListener('keydown',e=>keys[e.key]=1);addEventListener('keyup',e=>keys[e.key]=0);
+c.addEventListener('pointerdown',e=>{const r=c.getBoundingClientRect();touch=e.clientX-r.left<r.width/2?-1:1});addEventListener('pointerup',()=>touch=0);addEventListener('pointercancel',()=>touch=0);
+const norm=a=>((a%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+function ring(){const n=t>20?(Math.random()<.5?1:2):t>8&&Math.random()<.4?2:1,gw=Math.max(.75,1.25-t*.012),gaps=[];const base=Math.random()*Math.PI*2;for(let i=0;i<n;i++)gaps.push(norm(base+i*Math.PI*2/n));return{r:240,gaps,gw,spin:t>12?(Math.random()-.5)*.02:0}}
+function start(){ang=-Math.PI/2;rings=[];t=0;spawn=0;rot=0;on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function inGap(r,a){return r.gaps.some(g=>{let d=Math.abs(norm(a)-g);d=Math.min(d,2*Math.PI-d);return d<r.gw/2})}
+function loop(now){if(!on)return;const dt=Math.min(40,now-last)/16;last=now;t+=dt/60;const sp=1.3+t*.04;
+const dir=(keys.ArrowLeft||keys.a?-1:0)+(keys.ArrowRight||keys.d?1:0)||touch;ang+=dir*.085*dt;rot+=.004*dt*(1+t*.02);
+spawn-=dt;if(spawn<=0){rings.push(ring());spawn=Math.max(38,70-t)}
+let dead=false;rings=rings.filter(r=>{const pr=r.r;r.r-=sp*dt;r.gaps=r.gaps.map(g=>norm(g+r.spin*dt));if(pr>=PR&&r.r<PR&&!inGap(r,ang))dead=true;return r.r>8});
+x.clearRect(0,0,360,360);x.save();x.translate(CX,CY);x.rotate(rot);
+rings.forEach(r=>{x.strokeStyle=`hsl(${(t*20)%360},65%,55%)`;x.lineWidth=10;let segs=[...r.gaps].sort((a,b)=>a-b);
+for(let i=0;i<segs.length;i++){const s=segs[i]+r.gw/2,e=(i+1<segs.length?segs[i+1]:segs[0]+2*Math.PI)-r.gw/2;x.beginPath();x.arc(0,0,r.r,s,e);x.stroke()}});
+x.fillStyle=css('--ink');x.beginPath();x.arc(0,0,14,0,7);x.fill();x.fillStyle=css('--accent2');x.beginPath();x.arc(Math.cos(ang)*PR,Math.sin(ang)*PR,7,0,7);x.fill();x.restore();
+$('s').textContent=t.toFixed(1);
+if(dead){on=false;if(t>best){best=t;$('b').textContent=t.toFixed(1)}$('m').textContent=`Caught by a ring at ${t.toFixed(1)}s!`;$('go').disabled=false;$('go').textContent='Again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

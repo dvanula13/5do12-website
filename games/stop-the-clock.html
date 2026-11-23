@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stop the Clock | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="stop-the-clock"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Stop the Clock</h1>
+<div class="card"><p class="muted">Stop the timer at exactly <b>10.00</b> seconds. The display hides after 3 seconds!</p>
+<div class="big" id="c" style="font-size:64px;font-family:monospace">0.00</div><div class="msg" id="m"></div>
+<button id="b" style="font-size:20px;padding:14px 40px">Start</button><div class="stats" style="margin-top:10px">Best <b id="best">–</b></div></div>
+<script>
+const $=id=>document.getElementById(id);let t0,raf,run=false,best=null;
+function tick(){const s=(performance.now()-t0)/1000;$('c').textContent=s<3?s.toFixed(2):'?.??';raf=requestAnimationFrame(tick)}
+$('b').onclick=()=>{if(!run){run=true;t0=performance.now();$('m').textContent='';$('b').textContent='Stop';tick()}
+else{run=false;cancelAnimationFrame(raf);const s=(performance.now()-t0)/1000,d=Math.abs(s-10);$('c').textContent=s.toFixed(2);$('b').textContent='Try again';
+$('m').textContent=d<.05?'🎯 Incredible!':d<.2?'🔥 Very close!':d<.6?'Not bad':'Way off!';$('m').textContent+=` (off by ${d.toFixed(2)}s)`;if(best===null||d<best){best=d;$('best').textContent=d.toFixed(2)+'s off'}}};
+</script>
+
+</div></body></html>

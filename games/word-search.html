@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Word Search | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="word-search"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Word Search</h1>
+<style>#g{display:inline-grid;grid-template-columns:repeat(11,30px);user-select:none;touch-action:none}.L{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:monospace;font-size:17px;border-radius:6px}
+.L.sel{background:#3b6fe066}.L.fd{background:#2e9e5b55}#words{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:8px 0}#words span.got{text-decoration:line-through;color:var(--muted)}</style>
+<div class="card"><div class="stats">Theme <b id="th"></b> · Found <b id="f">0</b>/8 · Time <b id="t">0</b>s</div><div id="g"></div><div id="words"></div><div class="msg" id="m">Drag across a word (any direction, even backwards).</div><button class="alt" id="r">New puzzle</button></div>
+<script>
+const N=11,$=id=>document.getElementById(id),TH={Animals:'tiger zebra otter panda koala camel horse eagle shark llama moose bison sloth',Space:'comet orbit moon star nebula rocket planet galaxy meteor solar venus mars',Food:'pizza pasta bread salad tacos sushi apple mango olive honey lemon curry',Music:'drum piano guitar violin flute tempo chord melody rhythm banjo harp tuba'};
+let g,words,found,start=null,curSel=[],t0,iv,cells=[];
+function gen(){start=null;curSel=[];$('t').textContent=0;const tk=Object.keys(TH),th=tk[Math.floor(Math.random()*tk.length)];$('th').textContent=th;const pool=TH[th].split(' ').sort(()=>Math.random()-.5);
+for(;;){g=Array(N*N).fill('');words=[];for(const w of pool){if(words.length===8)break;for(let k=0;k<200;k++){const D=[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]][Math.floor(Math.random()*8)],r=Math.floor(Math.random()*N),c=Math.floor(Math.random()*N);
+const er=r+D[0]*(w.length-1),ec=c+D[1]*(w.length-1);if(er<0||ec<0||er>=N||ec>=N)continue;let ok=true,idx=[];for(let i=0;i<w.length;i++){const p=(r+D[0]*i)*N+c+D[1]*i;if(g[p]&&g[p]!==w[i]){ok=false;break}idx.push(p)}
+if(ok){idx.forEach((p,i)=>g[p]=w[i]);words.push({w,idx});break}}}if(words.length===8)break}
+g=g.map(v=>v||'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random()*26)]);found=new Set;$('f').textContent=0;$('m').textContent='Drag across a word (any direction, even backwards).';
+$('g').innerHTML='';cells=g.map((ch,i)=>{const d=document.createElement('div');d.className='L';d.textContent=ch.toUpperCase();d.dataset.i=i;$('g').appendChild(d);return d});
+$('words').innerHTML=words.map(o=>`<span id="w_${o.w}">${o.w.toUpperCase()}</span>`).join('');clearInterval(iv);t0=Date.now();iv=setInterval(()=>$('t').textContent=Math.floor((Date.now()-t0)/1000),1000)}
+function lineCells(a,b){const ar=Math.floor(a/N),ac=a%N,br=Math.floor(b/N),bc=b%N,dr=br-ar,dc=bc-ac;if(dr&&dc&&Math.abs(dr)!==Math.abs(dc))return[a];const n=Math.max(Math.abs(dr),Math.abs(dc)),sr=Math.sign(dr),sc=Math.sign(dc);return[...Array(n+1)].map((_,k)=>(ar+sr*k)*N+ac+sc*k)}
+const cellAt=e=>{const el=document.elementFromPoint(e.clientX,e.clientY);return el&&el.dataset&&el.dataset.i!==undefined?+el.dataset.i:null};
+function paint(){cells.forEach((d,i)=>d.classList.toggle('sel',curSel.includes(i)))}
+$('g').onpointerdown=e=>{const i=cellAt(e);if(i===null)return;start=i;curSel=[i];paint();$('g').setPointerCapture(e.pointerId)};
+$('g').onpointermove=e=>{if(start===null)return;const i=cellAt(e);if(i!==null){curSel=lineCells(start,i);paint()}};
+$('g').onpointerup=()=>{if(start===null)return;const s=curSel.map(i=>g[i]).join('');for(const o of words){if(found.has(o.w))continue;if(s===o.w||[...s].reverse().join('')===o.w){found.add(o.w);curSel.forEach(i=>cells[i].classList.add('fd'));$('w_'+o.w).classList.add('got');$('f').textContent=found.size;
+if(found.size===8){clearInterval(iv);$('m').textContent=`🎉 All words found in ${$('t').textContent}s!`}}}start=null;curSel=[];paint()};
+$('g').onpointercancel=()=>{start=null;curSel=[];paint()};
+$('r').onclick=gen;gen();
+</script>
+
+</div></body></html>

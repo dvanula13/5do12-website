@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Memory Path | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="memory-path"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Memory Path</h1>
+<style>.t{width:56px;height:56px;margin:0;border-radius:10px;background:var(--line);transition:background .15s}.t.lit{background:#f1c40f}.t.ok{background:var(--ok)}.t.bad{background:var(--accent2)}</style>
+<div class="card"><div class="stats">Path length <b id="lv">3</b> · Best <b id="b">0</b></div>
+<div class="grid" id="g"></div><div class="msg" id="m">Watch the path light up, then walk it in the same order.</div><button id="go">Start</button></div>
+<script>
+const N=5,$=id=>document.getElementById(id);let path,pos,lock=true,len=3,best=0,T=[];
+for(let i=0;i<N*N;i++){const b=document.createElement('button');b.className='t';b.onclick=()=>tap(i);$('g').appendChild(b);T.push(b)}
+function mkPath(){for(;;){const p=[Math.floor(Math.random()*N*N)];while(p.length<len){const i=p.at(-1),x=i%N,y=Math.floor(i/N);const o=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].map(([a,b])=>[x+a,y+b]).filter(([a,b])=>a>=0&&b>=0&&a<N&&b<N).map(([a,b])=>b*N+a).filter(j=>!p.includes(j));if(!o.length)break;p.push(o[Math.floor(Math.random()*o.length)])}if(p.length===len)return p}}
+async function show(){lock=true;T.forEach(t=>t.className='t');path=mkPath();pos=0;$('lv').textContent=len;$('m').textContent='Watch...';await new Promise(r=>setTimeout(r,500));
+for(const i of path){T[i].classList.add('lit');await new Promise(r=>setTimeout(r,Math.max(250,520-len*15)));T[i].classList.remove('lit');await new Promise(r=>setTimeout(r,90))}lock=false;$('m').textContent='Your turn — walk the path.'}
+function tap(i){if(lock)return;if(i===path[pos]){T[i].classList.add('ok');pos++;if(pos===len){lock=true;if(len>best){best=len;$('b').textContent=len}if(len===N*N){$('m').textContent='🏆 You completed the longest path!';len=3;$('go').textContent='Play again';$('go').disabled=false;return}len++;$('m').textContent='✅ Perfect!';setTimeout(show,800)}}
+else{lock=true;T[i].classList.add('bad');path.slice(pos).forEach(j=>T[j].classList.add('lit'));$('m').textContent=`❌ Wrong step. You reached length ${len}.`;len=3;$('go').disabled=false;$('go').textContent='Try again'}}
+$('go').onclick=()=>{$('go').disabled=true;show()};
+</script>
+
+</div></body></html>

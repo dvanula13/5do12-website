@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trail Duel | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="trail-duel"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Trail Duel</h1>
+<div class="card"><div class="stats"><span style="color:#3b9ae1">You <b id="ps">0</b></span><span style="color:#e8564a">CPU <b id="cs">0</b></span> · First to 3</div>
+<canvas id="c" width="360" height="360"></canvas><div class="msg" id="m">You leave a trail. Don't hit any trail or wall. Arrows / WASD / swipe.</div>
+<div class="row"><button class="alt" data-d="0,-1">▲</button><button class="alt" data-d="-1,0">◀</button><button class="alt" data-d="1,0">▶</button><button class="alt" data-d="0,1">▼</button></div><button id="go">Start round</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),N=45,Z=8;
+let g,P,C,tm,sc=[0,0];
+const free=(a,b)=>a>=0&&b>=0&&a<N&&b<N&&!g[b*N+a];
+function setD(a,b){if(P&&!(a===-P.d[0]&&b===-P.d[1]))P.nd=[a,b]}
+const K={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]};
+addEventListener('keydown',e=>{const k=K[e.key];if(k){e.preventDefault();setD(...k)}});
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>setD(...b.dataset.d.split(',').map(Number)));
+let ts;c.addEventListener('touchstart',e=>{ts=e.touches[0]},{passive:true});c.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-ts.clientX,dy=t.clientY-ts.clientY;if(Math.max(Math.abs(dx),Math.abs(dy))>15)Math.abs(dx)>Math.abs(dy)?setD(Math.sign(dx),0):setD(0,Math.sign(dy))});
+function space(sx,sy){const seen=new Set,st=[[sx,sy]];let n=0;while(st.length&&n<400){const[a,b]=st.pop(),k=b*N+a;if(seen.has(k)||!free(a,b))continue;seen.add(k);n++;st.push([a+1,b],[a-1,b],[a,b+1],[a,b-1])}return n}
+function ai(){const opts=[[1,0],[-1,0],[0,1],[0,-1]].filter(d=>!(d[0]===-C.d[0]&&d[1]===-C.d[1])).filter(d=>free(C.x+d[0],C.y+d[1]));if(!opts.length)return;
+let best=opts[0],bs=-Infinity;for(const d of opts){let s=space(C.x+d[0],C.y+d[1]);if(d[0]===C.d[0]&&d[1]===C.d[1])s+=3;const dist=Math.abs(C.x+d[0]-P.x)+Math.abs(C.y+d[1]-P.y);s-=dist*.15;s+=Math.random()*4;if(s>bs){bs=s;best=d}}C.d=best}
+function start(){$('ps').textContent=sc[0];$('cs').textContent=sc[1];g=new Uint8Array(N*N);P={x:10,y:22,d:[1,0],nd:[1,0]};C={x:34,y:22,d:[-1,0]};g[P.y*N+P.x]=1;g[C.y*N+C.x]=2;draw();$('m').textContent='';$('go').disabled=true;clearInterval(tm);tm=setInterval(step,70)}
+function step(){P.d=P.nd;ai();const np=[P.x+P.d[0],P.y+P.d[1]],nc=[C.x+C.d[0],C.y+C.d[1]];let pd=!free(...np),cd=!free(...nc);if(np[0]===nc[0]&&np[1]===nc[1])pd=cd=true;
+if(pd||cd){clearInterval(tm);if(pd&&cd)$('m').textContent='Both crashed — draw round';else if(pd){sc[1]++;$('m').textContent='You crashed!'}else{sc[0]++;$('m').textContent='CPU crashed! 🎉'}
+$('ps').textContent=sc[0];$('cs').textContent=sc[1];if(sc[0]>=3||sc[1]>=3){$('m').textContent+=sc[0]>=3?' You win the duel!':' CPU wins the duel.';sc=[0,0]}$('go').disabled=false;return}
+P.x=np[0];P.y=np[1];C.x=nc[0];C.y=nc[1];g[P.y*N+P.x]=1;g[C.y*N+C.x]=2;draw()}
+function draw(){x.clearRect(0,0,360,360);for(let i=0;i<N*N;i++)if(g[i]){x.fillStyle=g[i]===1?'#3b9ae1':'#e8564a';x.fillRect((i%N)*Z,Math.floor(i/N)*Z,Z,Z)}
+x.fillStyle='#fff';x.fillRect(P.x*Z+2,P.y*Z+2,4,4);x.fillRect(C.x*Z+2,C.y*Z+2,4,4)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

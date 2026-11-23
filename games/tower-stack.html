@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tower Stack | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="tower-stack"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Tower Stack</h1>
+<div class="card"><div class="stats">Height <b id="s">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="360" height="520"></canvas><div class="msg" id="m">Tap / Space to drop the block. Overhangs get chopped off.</div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),BH=24,W=360,H=520;
+let st,cur,dir,sp,deb,cam,camT,over,best=0,last=performance.now(),perfect;
+function reset(){st=[{x:90,w:180}];newBlock();deb=[];cam=camT=0;over=false;perfect=0;$('s').textContent=0;$('m').textContent='Tap / Space to drop the block.'}
+function newBlock(){const top=st[st.length-1];dir=st.length%2?1:-1;cur={x:dir>0?-top.w:W,w:top.w};sp=2.2+st.length*.08}
+const yOf=i=>H-60-i*BH+cam;
+function drop(){if(over){reset();return}const top=st[st.length-1],l=Math.max(cur.x,top.x),r=Math.min(cur.x+cur.w,top.x+top.w),ov=r-l;
+if(ov<=0){deb.push({x:cur.x,w:cur.w,y:yOf(st.length),vy:0,h:st.length});over=true;const h=st.length-1;if(h>best){best=h;$('b').textContent=h}$('m').textContent=`Tower fell at ${h}! Tap to restart.`;return}
+if(Math.abs(cur.x-top.x)<4){cur.x=top.x;perfect++;$('m').textContent=perfect>1?`✨ Perfect x${perfect}!`:'✨ Perfect!';if(perfect>=3&&cur.w<180){cur.w=Math.min(180,cur.w+10);cur.x-=5}}
+else{perfect=0;$('m').textContent='';if(cur.x<top.x)deb.push({x:cur.x,w:top.x-cur.x,y:yOf(st.length),vy:0,h:st.length});else deb.push({x:r,w:cur.x+cur.w-r,y:yOf(st.length),vy:0,h:st.length});cur={x:l,w:ov}}
+st.push(cur);$('s').textContent=st.length-1;camT=Math.max(0,(st.length-10)*BH);newBlock()}
+c.addEventListener('pointerdown',drop);addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();drop()}});
+const col=i=>`hsl(${(i*12)%360},65%,58%)`;
+function loop(t){const dt=Math.min(50,t-last)/16;last=t;cam+=(camT-cam)*.1;
+if(!over){cur.x+=dir*sp*dt;if(cur.x+cur.w>W+40&&dir>0)dir=-1;if(cur.x<-40&&dir<0)dir=1}
+x.clearRect(0,0,W,H);st.forEach((b,i)=>{x.fillStyle=col(i);x.fillRect(b.x,yOf(i),b.w,BH-2)});
+if(!over){x.fillStyle=col(st.length);x.fillRect(cur.x,yOf(st.length),cur.w,BH-2)}
+deb=deb.filter(d=>{d.vy+=.5*dt;d.y+=d.vy*dt;x.fillStyle=col(d.h);x.globalAlpha=.8;x.fillRect(d.x,d.y,d.w,BH-2);x.globalAlpha=1;return d.y<H+40});requestAnimationFrame(loop)}
+reset();requestAnimationFrame(loop);
+</script>
+
+</div></body></html>

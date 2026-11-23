@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aim Trainer | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="aim-trainer"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Aim Trainer</h1>
+<style>#area{position:relative;height:340px;background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:crosshair}#tg{position:absolute;width:46px;height:46px;border-radius:50%;padding:0;margin:0;background:radial-gradient(circle,#fff 0 18%,#e74c3c 19% 40%,#fff 41% 60%,#e74c3c 61%);display:none}</style>
+<div class="card"><div class="stats">Hits <b id="h">0</b>/20 · Misses <b id="ms">0</b> · Best avg <b id="b">–</b></div>
+<div id="area"><button id="tg"></button></div><div class="msg" id="m">Hit 20 targets as fast as you can.</div><button id="go">Start</button></div>
+<script>
+const $=id=>document.getElementById(id);let h,miss,t0,best=null,on=false;
+function place(){const a=$('area');$('tg').style.left=Math.random()*(a.clientWidth-46)+'px';$('tg').style.top=Math.random()*(a.clientHeight-46)+'px'}
+$('go').onclick=()=>{h=miss=0;on=true;$('h').textContent=0;$('ms').textContent=0;$('m').textContent='';$('tg').style.display='block';$('go').disabled=true;place();t0=performance.now()};
+$('tg').onpointerdown=e=>{e.stopPropagation();if(!on)return;h++;$('h').textContent=h;if(h>=20){on=false;$('tg').style.display='none';$('go').disabled=false;
+const avg=Math.round((performance.now()-t0)/20);$('m').textContent=`Average ${avg} ms per target, ${miss} misses`;if(best===null||avg<best){best=avg;$('b').textContent=avg+' ms'}}else place()};
+$('area').onpointerdown=()=>{if(on){miss++;$('ms').textContent=miss}};
+</script>
+
+</div></body></html>

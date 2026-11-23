@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bumper Sumo | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="bumper-sumo"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Bumper Sumo</h1>
+<div class="card"><div class="stats"><span style="color:#3b9ae1">You <b id="ps">0</b></span><span style="color:#e8564a">CPU <b id="cs">0</b></span> · First to 3</div>
+<canvas id="c" width="360" height="360"></canvas><div class="msg" id="m">Push the CPU out of the ring! Hold mouse/finger to steer (or arrows). Space / double-tap to dash.</div><button id="go">Start round</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),CX=180,CY=180,BR=22;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let P,C,R,on=false,sc=[0,0],tgt=null,keys={},lastTap=-Infinity,last;
+const mk=(x,y)=>({x,y,vx:0,vy:0,cd:0});
+function dash(b,dx,dy){if(b.cd>0)return;const d=Math.hypot(dx,dy)||1;b.vx+=dx/d*7;b.vy+=dy/d*7;b.cd=90}
+const pt=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*360/r.width,y:(e.clientY-r.top)*360/r.height}};
+c.addEventListener('pointerdown',e=>{if(!on)return;tgt=pt(e);const n=performance.now();if(n-lastTap<300)dash(P,tgt.x-P.x,tgt.y-P.y);lastTap=n});c.addEventListener('pointermove',e=>{if(tgt)tgt=pt(e)});addEventListener('pointerup',()=>tgt=null);addEventListener('pointercancel',()=>tgt=null);
+addEventListener('keydown',e=>{keys[e.key]=1;if(e.key===' '&&on){e.preventDefault();dash(P,P.vx||1,P.vy)}});addEventListener('keyup',e=>keys[e.key]=0);
+function start(){tgt=null;lastTap=-Infinity;$('ps').textContent=sc[0];$('cs').textContent=sc[1];P=mk(110,180);C=mk(250,180);R=160;on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function loop(t){if(!on)return;const dt=Math.min(40,t-last)/16;last=t;R=Math.max(90,R-.03*dt);
+let ax=(keys.ArrowRight?1:0)-(keys.ArrowLeft?1:0),ay=(keys.ArrowDown?1:0)-(keys.ArrowUp?1:0);if(tgt){ax=tgt.x-P.x;ay=tgt.y-P.y}const al=Math.hypot(ax,ay);if(al>(tgt?4:0)){P.vx+=ax/al*.22*dt;P.vy+=ay/al*.22*dt}
+// CPU: aim at a point behind the player (relative to center) so it pushes outward; retreat when near the edge
+const pdx=P.x-CX,pdy=P.y-CY,pl=Math.hypot(pdx,pdy)||1,gx=P.x-pdx/pl*10,gy=P.y-pdy/pl*10,cdist=Math.hypot(C.x-CX,C.y-CY);
+let tx=gx-C.x,ty=gy-C.y;if(cdist>R-45){tx=CX-C.x;ty=CY-C.y}const tl=Math.hypot(tx,ty)||1,lvl=Math.min(.21,.17+(sc[0])*.015);C.vx+=tx/tl*lvl*dt;C.vy+=ty/tl*lvl*dt;
+if(C.cd<=0&&Math.hypot(P.x-C.x,P.y-C.y)<90&&cdist<R-60&&Math.random()<.03)dash(C,P.x-C.x,P.y-C.y);
+for(const b of[P,C]){b.vx*=.96;b.vy*=.96;b.x+=b.vx*dt;b.y+=b.vy*dt;b.cd-=dt}
+const dx=C.x-P.x,dy=C.y-P.y,d=Math.hypot(dx,dy);if(d<BR*2&&d>0){const nx=dx/d,ny=dy/d,ov=BR*2-d;P.x-=nx*ov/2;P.y-=ny*ov/2;C.x+=nx*ov/2;C.y+=ny*ov/2;
+const rv=(C.vx-P.vx)*nx+(C.vy-P.vy)*ny;if(rv<0){const j=-1.8*rv/2;P.vx-=j*nx;P.vy-=j*ny;C.vx+=j*nx;C.vy+=j*ny}}
+x.clearRect(0,0,360,360);x.fillStyle='#d9c59a';x.beginPath();x.arc(CX,CY,R,0,7);x.fill();x.strokeStyle='#8a6d55';x.lineWidth=4;x.stroke();
+for(const[b,col]of[[P,'#3b9ae1'],[C,'#e8564a']]){x.fillStyle=col;x.beginPath();x.arc(b.x,b.y,BR,0,7);x.fill();if(b.cd<=0){x.strokeStyle='#fff';x.lineWidth=2;x.stroke()}}
+const po=Math.hypot(P.x-CX,P.y-CY)>R,co=Math.hypot(C.x-CX,C.y-CY)>R;
+if(po||co){on=false;if(po&&!co)sc[1]++;else if(co&&!po)sc[0]++;$('ps').textContent=sc[0];$('cs').textContent=sc[1];$('m').textContent=co&&!po?'Out goes the CPU! 🎉':po&&!co?'You got pushed out!':'Both out!';
+if(sc[0]>=3||sc[1]>=3){$('m').textContent+=sc[0]>=3?' 🏆 You are the champion!':' CPU takes the match.';sc=[0,0]}$('go').disabled=false;return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

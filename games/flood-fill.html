@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flood Fill | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="flood-fill"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Flood Fill</h1>
+<style>#g{grid-template-columns:repeat(12,24px);gap:0}.f{width:24px;height:24px}.cb{width:44px;height:44px;border-radius:50%;margin:4px;padding:0;border:3px solid var(--card)}</style>
+<div class="card"><p class="muted">Pick colors to flood from the top-left corner. Fill the whole board in 22 moves.</p>
+<div class="stats">Moves <b id="mv">0</b>/22</div><div class="grid" id="g"></div><div class="row" id="pal"></div><div class="msg" id="m"></div><button class="alt" id="r">New board</button></div>
+<script>
+const N=12,C=['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22'],$=id=>document.getElementById(id);let b,mv,done,cells=[];
+for(let i=0;i<N*N;i++){const d=document.createElement('div');d.className='f';$('g').appendChild(d);cells.push(d)}
+C.forEach((c,k)=>{const p=document.createElement('button');p.className='cb';p.style.background=c;p.onclick=()=>pick(k);$('pal').appendChild(p)});
+function draw(){cells.forEach((d,i)=>d.style.background=C[b[i]]);$('mv').textContent=mv}
+function pick(k){if(done||k===b[0])return;const old=b[0],st=[0],seen=new Set;while(st.length){const i=st.pop();if(seen.has(i)||b[i]!==old)continue;seen.add(i);b[i]=k;const x=i%N,y=(i/N)|0;
+if(x>0)st.push(i-1);if(x<N-1)st.push(i+1);if(y>0)st.push(i-N);if(y<N-1)st.push(i+N)}mv++;draw();
+if(b.every(v=>v===b[0])){done=true;$('m').textContent=`🎉 Flooded in ${mv} moves!`}else if(mv>=22){done=true;$('m').textContent='Out of moves! Try a new board.'}}
+function reset(){b=Array.from({length:N*N},()=>Math.floor(Math.random()*6));mv=0;done=false;$('m').textContent='';draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

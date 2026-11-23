@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dark Maze | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="dark-maze"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Dark Maze</h1>
+<div class="card"><div class="stats">Level <b id="lv">1</b> · Keys <b id="k">0</b>/3 · Time <b id="t">0</b>s</div>
+<canvas id="c" width="360" height="360"></canvas><div class="msg" id="m">You only see what your lantern lights. Find 3 🔑, then the 🚪. Arrows / WASD / swipe.</div>
+<div class="row"><button class="alt" data-d="0,-1">▲</button><button class="alt" data-d="-1,0">◀</button><button class="alt" data-d="1,0">▶</button><button class="alt" data-d="0,1">▼</button></div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id);
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let lv=1,N,Z,walls,seen,p,keys,got,door,t0,iv,finished;
+function gen(){finished=false;N=Math.min(29,9+lv*2);Z=360/N;walls=[...Array(N*N)].map(()=>[1,1,1,1]);const vis=new Uint8Array(N*N),st=[0];vis[0]=1;const D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
+while(st.length){const i=st.at(-1),cx=i%N,cy=Math.floor(i/N),opts=D.filter(([dx,dy])=>{const X=cx+dx,Y=cy+dy;return X>=0&&Y>=0&&X<N&&Y<N&&!vis[Y*N+X]});
+if(!opts.length){st.pop();continue}const[dx,dy,w,o]=opts[Math.floor(Math.random()*opts.length)],j=(cy+dy)*N+cx+dx;walls[i][w]=0;walls[j][o]=0;vis[j]=1;st.push(j)}
+const dead=[...Array(N*N).keys()].filter(i=>i>N&&i!==N*N-1&&walls[i].filter(Boolean).length===3).sort(()=>Math.random()-.5);door=N*N-1;keys=[...new Set([...dead,...Array.from({length:door-1},(_,i)=>i+1)])].slice(0,3);
+p={x:0,y:0};got=0;seen=new Uint8Array(N*N);$('lv').textContent=lv;$('k').textContent=0;clearInterval(iv);t0=Date.now();iv=setInterval(()=>$('t').textContent=Math.floor((Date.now()-t0)/1000),1000);light();draw()}
+function light(){for(let i=0;i<N*N;i++){const dx=i%N-p.x,dy=Math.floor(i/N)-p.y;if(dx*dx+dy*dy<=5)seen[i]=1}}
+function move(dx,dy){if(finished)return;const i=p.y*N+p.x,w=dx===1?1:dx===-1?3:dy===1?2:0;if(walls[i][w])return;p.x+=dx;p.y+=dy;const j=p.y*N+p.x;
+if(keys.includes(j)){keys=keys.filter(k=>k!==j);got++;$('k').textContent=got;$('m').textContent=got<3?'🔑 Got a key!':'🔑 All keys! Find the door.'}
+if(j===door){if(got<3)$('m').textContent='🚪 Locked — you need 3 keys.';else{finished=true;clearInterval(iv);$('m').textContent=`🎉 Escaped level ${lv} in ${$('t').textContent}s! Next maze coming up.`;lv++;setTimeout(gen,1200)}}light();draw()}
+function draw(){x.fillStyle='#000';x.fillRect(0,0,360,360);for(let i=0;i<N*N;i++){const X=i%N,Y=Math.floor(i/N),dx=X-p.x,dy=Y-p.y,d=Math.sqrt(dx*dx+dy*dy);
+const vis=d<=2.3?1:seen[i]?.25:0;if(!vis)continue;x.globalAlpha=vis;x.fillStyle='#2a2f3a';x.fillRect(X*Z,Y*Z,Z,Z);x.strokeStyle='#c9b37a';x.lineWidth=2;x.beginPath();const w=walls[i];
+if(w[0]){x.moveTo(X*Z,Y*Z);x.lineTo(X*Z+Z,Y*Z)}if(w[1]){x.moveTo(X*Z+Z,Y*Z);x.lineTo(X*Z+Z,Y*Z+Z)}if(w[2]){x.moveTo(X*Z,Y*Z+Z);x.lineTo(X*Z+Z,Y*Z+Z)}if(w[3]){x.moveTo(X*Z,Y*Z);x.lineTo(X*Z,Y*Z+Z)}x.stroke();
+x.font=Z*.7+'px serif';x.textAlign='center';x.textBaseline='middle';if(keys.includes(i))x.fillText('🔑',X*Z+Z/2,Y*Z+Z/2);if(i===door)x.fillText('🚪',X*Z+Z/2,Y*Z+Z/2)}
+x.globalAlpha=1;const g=x.createRadialGradient(p.x*Z+Z/2,p.y*Z+Z/2,0,p.x*Z+Z/2,p.y*Z+Z/2,Z*2.6);g.addColorStop(0,'#ffd56b44');g.addColorStop(1,'#ffd56b00');x.fillStyle=g;x.fillRect(0,0,360,360);
+x.fillStyle='#ffd56b';x.beginPath();x.arc(p.x*Z+Z/2,p.y*Z+Z/2,Z*.3,0,7);x.fill()}
+const K={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]};addEventListener('keydown',e=>{const k=K[e.key];if(k){e.preventDefault();move(...k)}});
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>move(...b.dataset.d.split(',').map(Number)));
+let ts;c.addEventListener('touchstart',e=>{ts=e.touches[0]},{passive:true});c.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-ts.clientX,dy=t.clientY-ts.clientY;if(Math.max(Math.abs(dx),Math.abs(dy))>15)Math.abs(dx)>Math.abs(dy)?move(Math.sign(dx),0):move(0,Math.sign(dy))});
+gen();
+</script>
+
+</div></body></html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lane Shift | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="lane-shift"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Lane Shift</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Best <b id="b">0</b> <span id="mir" style="color:var(--accent2);font-weight:700"></span></div>
+<canvas id="c" width="300" height="500"></canvas><div class="msg" id="m">← → or tap left/right to change lanes. Grab 🪙. Careful: 🪞 flips your controls!</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=300,H=500,LW=100;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let lane,px,objs,sp,sc,on=false,best=0,mirror=0,next,last,road=0;
+function shift(d){if(!on)return;if(mirror>0)d=-d;lane=Math.max(0,Math.min(2,lane+d))}
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')shift(-1);if(e.key==='ArrowRight'||e.key==='d')shift(1)});
+c.addEventListener('pointerdown',e=>{const r=c.getBoundingClientRect();shift(e.clientX-r.left<r.width/2?-1:1)});
+function start(){lane=1;px=150;objs=[];sp=4;sc=0;mirror=0;next=0;on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function loop(t){if(!on)return;const dt=Math.min(40,t-last)/16;last=t;sp=4+sc/60;road=(road+sp*dt)%40;mirror=Math.max(0,mirror-dt/60);$('mir').textContent=mirror>0?'🪞 MIRRORED '+Math.ceil(mirror)+'s':'';
+next-=sp*dt;if(next<=0){const free=Math.floor(Math.random()*3);for(let l=0;l<3;l++){if(l===free){if(Math.random()<.5)objs.push({l,y:-30,k:Math.random()<.12?'m':'c'})}else if(Math.random()<.6)objs.push({l,y:-30,k:'x'})}next=170}
+px+=(lane*LW+50-px)*.3*dt;
+x.clearRect(0,0,W,H);x.fillStyle='#3a3d44';x.fillRect(0,0,W,H);x.fillStyle='#ffffff55';for(let l=1;l<3;l++)for(let y=-40+road;y<H;y+=40)x.fillRect(l*LW-2,y,4,20);
+let dead=false;objs=objs.filter(o=>{o.y+=sp*dt;const cx=o.l*LW+50;
+if(o.k==='x'){x.fillStyle='#e8564a';x.beginPath();x.roundRect(cx-30,o.y-18,60,36,6);x.fill()}else{x.font='30px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(o.k==='c'?'🪙':'🪞',cx,o.y)}
+if(Math.abs(cx-px)<40&&Math.abs(o.y-430)<34){if(o.k==='x')dead=true;else{if(o.k==='c')sc+=10;else mirror=5;return false}}return o.y<H+40});
+sc+=dt*.05;x.fillStyle='#3b9ae1';x.beginPath();x.roundRect(px-20,410,40,56,8);x.fill();x.fillStyle='#bfe3ff';x.fillRect(px-14,420,28,12);
+$('s').textContent=Math.floor(sc);
+if(dead){on=false;if(sc>best){best=Math.floor(sc);$('b').textContent=best}$('m').textContent=`Crash! Score ${Math.floor(sc)}`;$('go').disabled=false;$('go').textContent='Again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

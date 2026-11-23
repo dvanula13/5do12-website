@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rope Swing | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="rope-swing"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Rope Swing</h1>
+<div class="card"><div class="stats">Distance <b id="s">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="480" height="320"></canvas><div class="msg" id="m">Hold mouse/touch/Space to grab the nearest hook ahead. Release to fly. Don't touch the lava!</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=480,H=320,LAVA=296;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let p,pp,hooks,rope,L,hold=false,on=false,best=0,camX,lastX;
+const down=()=>{hold=true;grab()},up=()=>{hold=false;rope=null};
+c.addEventListener('pointerdown',down);addEventListener('pointerup',up);addEventListener('pointercancel',up);addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();if(!e.repeat)down()}});addEventListener('keyup',e=>{if(e.key===' ')up()});
+function grab(){if(!on||rope)return;let b=null,bd=1e9;for(const h of hooks){if(h.x<p.x-30)continue;const d=Math.hypot(h.x-p.x,h.y-p.y);if(d<250&&d<bd){bd=d;b=h}}if(b){rope=b;L=bd}}
+function start(){hooks=[];lastX=120;while(lastX<W*2)addHook();p={x:60,y:150};pp={x:56,y:152};rope=hooks[0];L=Math.hypot(rope.x-p.x,rope.y-p.y);hold=true;camX=0;on=true;$('go').disabled=true;$('m').textContent='';requestAnimationFrame(loop)}
+function addHook(){const d=Math.max(0,lastX/150);lastX+=110+Math.random()*(70+Math.min(60,d*2));hooks.push({x:lastX,y:30+Math.random()*90})}
+function loop(){if(!on)return;
+const vx=(p.x-pp.x)*.999,vy=(p.y-pp.y)*.999;pp={x:p.x,y:p.y};p.x+=vx;p.y+=vy+.32;
+if(rope){const dx=p.x-rope.x,dy=p.y-rope.y,d=Math.hypot(dx,dy);if(d>L){p.x=rope.x+dx/d*L;p.y=rope.y+dy/d*L}}
+if(p.y<8){p.y=8}
+camX+=((p.x-160)-camX)*.1;while(lastX<camX+W*2)addHook();hooks=hooks.filter(h=>h.x>camX-100);
+x.clearRect(0,0,W,H);x.save();x.translate(-camX,0);
+hooks.forEach(h=>{x.fillStyle=css('--muted');x.beginPath();x.arc(h.x,h.y,6,0,7);x.fill()});
+if(rope){x.strokeStyle='#c0843d';x.lineWidth=2;x.beginPath();x.moveTo(rope.x,rope.y);x.lineTo(p.x,p.y);x.stroke()}
+x.fillStyle=css('--accent');x.beginPath();x.arc(p.x,p.y,10,0,7);x.fill();x.restore();
+const grd=x.createLinearGradient(0,LAVA,0,H);grd.addColorStop(0,'#ff7a1a');grd.addColorStop(1,'#c0392b');x.fillStyle=grd;x.beginPath();x.moveTo(0,H);for(let i=0;i<=W;i+=20)x.lineTo(i,LAVA+Math.sin((i+camX)/30+performance.now()/300)*4);x.lineTo(W,H);x.fill();
+const dist=Math.max(0,Math.floor((p.x-60)/10));$('s').textContent=dist;
+if(p.y>LAVA-6){on=false;if(dist>best){best=dist;$('b').textContent=dist}$('m').textContent=`🔥 Into the lava at ${dist}m!`;$('go').disabled=false;$('go').textContent='Again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

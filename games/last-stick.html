@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Last Stick | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="last-stick"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Last Stick</h1>
+<style>#st{font-size:40px;letter-spacing:4px;color:#c0843d;min-height:60px;word-break:break-all}</style>
+<div class="card"><p class="muted">Take 1, 2 or 3 sticks per turn. Whoever takes the <b>last</b> stick loses.</p>
+<div class="stats">Sticks left <b id="n">0</b></div><div id="st"></div><div class="msg" id="m"></div>
+<div class="row" id="btns"><button data-k="1">Take 1</button><button data-k="2">Take 2</button><button data-k="3">Take 3</button></div><button class="alt" id="r">New game</button></div>
+<script>
+let cpuTimer;
+const $=id=>document.getElementById(id);let n,busy;
+function draw(){$('st').textContent='|'.repeat(n);$('n').textContent=n;document.querySelectorAll('[data-k]').forEach(b=>b.disabled=busy||+b.dataset.k>n||n===0)}
+function take(k,who){n-=k;$('m').textContent=`${who} took ${k}.`;if(n===0){$('m').textContent+=who==='You'?' You took the last one — CPU wins!':' CPU took the last one — 🎉 you win!';busy=true}draw();return n===0}
+document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{if(take(+b.dataset.k,'You'))return;busy=true;draw();
+cpuTimer=setTimeout(()=>{let k=(n-1)%4;if(k===0)k=1+Math.floor(Math.random()*Math.min(3,n));k=Math.min(k,n);busy=false;take(k,'CPU')},700)});
+function reset(){clearTimeout(cpuTimer);n=15+Math.floor(Math.random()*11);busy=false;$('m').textContent='Your move.';draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

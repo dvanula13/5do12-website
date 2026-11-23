@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fishing Pond | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="fishing-pond"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Fishing Pond</h1>
+<style>#log{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.f{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font-size:13px}.f.no{opacity:.35}</style>
+<div class="card"><div class="stats">Caught <b id="n">0</b> · Points <b id="p">0</b></div>
+<canvas id="c" width="360" height="400"></canvas><div class="msg" id="m">Hold to charge your cast, release to throw.</div><div id="log"></div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=360,H=400,WY=120;
+const FISH=[['🐟','Minnow',50,1,.4],['🐠','Sunfish',25,2,.6],['🐡','Puffer',12,4,.9],['🦐','Shrimp',30,1,.3],['🦀','Crab',15,3,.7],['🐙','Octopus',8,6,1.1],['🦑','Squid',6,7,1.2],['🐋','Whale',2,20,1.6]];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let st='idle',pow=0,bob=null,wait=0,bite=0,fish=null,ten=0,dist=0,slack=0,hold=false,n=0,pts=0,got={},frame=0;
+const down=()=>{hold=true;if(st==='idle'){st='charge';pow=0}else if(st==='bite'){st='reel';fish=pick();ten=30;dist=100;slack=0;$('m').textContent=`Hooked something! Hold to reel, release to ease off. Keep the line out of the red.`}else if(st==='wait'){st='idle';bob=null;$('m').textContent='Too early — it swam off. Cast again.'}};
+const up=()=>{hold=false;if(st==='charge'){st='wait';bob={x:180,y:WY+30+pow*2.2,t:0};wait=60+Math.random()*200;$('m').textContent='Wait for a bite... tap when the bobber dips!'}};
+c.addEventListener('pointerdown',down);addEventListener('pointerup',up);addEventListener('pointercancel',up);addEventListener('keydown',e=>{if(e.key===' '&&!e.repeat){e.preventDefault();down()}});addEventListener('keyup',e=>{if(e.key===' ')up()});
+function pick(){const deep=(bob.y-WY)/(H-WY);const pool=FISH.map(f=>[f,f[2]*(f[3]>5?deep*2:1)]);let r=Math.random()*pool.reduce((a,b)=>a+b[1],0);for(const[f,w]of pool){r-=w;if(r<=0)return f}return FISH[0]}
+function log(){$('log').innerHTML=FISH.map(f=>`<span class="f ${got[f[1]]?'':'no'}">${got[f[1]]?f[0]+' '+f[1]+' ×'+got[f[1]]:'❔ ???'}</span>`).join('')}
+function loop(){frame++;
+if(st==='charge')pow=Math.min(100,pow+1.6);
+if(st==='wait'){wait--;if(wait<=0){st='bite';bite=50;$('m').textContent='❗ BITE! Tap now!'}}
+if(st==='bite'){bite--;if(bite<=0){st='idle';bob=null;$('m').textContent='It got away. Cast again.'}}
+if(st==='reel'){const f=fish,pull=f[4]*(Math.sin(frame/(12-f[4]*3))>.3?1.6:.6);if(hold){ten+=1.1+pull*.6;dist-=.55}else{ten-=1.6;dist+=pull*.12}ten=Math.max(0,ten);
+if(ten<5)slack++;else slack=0;
+if(ten>=100){st='idle';bob=null;$('m').textContent='💥 Snap! The line broke.'}else if(slack>120||dist>130){st='idle';bob=null;$('m').textContent='It slipped off the hook.'}
+else if(dist<=0){st='idle';bob=null;n++;pts+=f[3]*10;got[f[1]]=(got[f[1]]||0)+1;$('n').textContent=n;$('p').textContent=pts;$('m').textContent=`🎣 You caught a ${f[0]} ${f[1]}! (+${f[3]*10})`;log()}}
+x.clearRect(0,0,W,H);x.fillStyle='#87c5f0';x.fillRect(0,0,W,WY);x.fillStyle='#2f78b5';x.fillRect(0,WY,W,H-WY);x.fillStyle='#1f5f94';for(let i=0;i<W;i+=30)x.fillRect((i*3+frame*.3)%W,WY+20+(i*37)%250,14,2);
+x.fillStyle='#7a5a3a';x.fillRect(150,40,60,80);x.font='28px serif';x.textAlign='center';x.fillText('🧍',180,40);
+if(st==='charge'){x.fillStyle='#0005';x.fillRect(110,8,140,12);x.fillStyle=pow>80?'#e74c3c':'#f1c40f';x.fillRect(110,8,1.4*pow,12)}
+if(bob){const dip=st==='bite'?Math.sin(frame/2)*6+6:Math.sin(frame/15)*2;const by=st==='reel'?WY+30+dist*2:bob.y;x.strokeStyle='#fff8';x.beginPath();x.moveTo(195,30);x.lineTo(bob.x,by+dip);x.stroke();
+x.fillStyle='#e74c3c';x.beginPath();x.arc(bob.x,by+dip,6,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(bob.x,by+dip-3,6,Math.PI,0);x.fill()}
+if(st==='reel'){x.fillStyle='#0006';x.fillRect(20,H-30,320,14);const g=x.createLinearGradient(20,0,340,0);g.addColorStop(0,'#2ecc71');g.addColorStop(.7,'#f1c40f');g.addColorStop(1,'#e74c3c');x.fillStyle=g;x.fillRect(20,H-30,3.2*Math.min(100,ten),14);
+x.fillStyle='#fff';x.font='12px system-ui';x.fillText('LINE TENSION',180,H-36)}
+requestAnimationFrame(loop)}
+log();loop();
+</script>
+
+</div></body></html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkers | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="checkers"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Checkers</h1>
+<style>#g{display:inline-grid;grid-template-columns:repeat(8,40px);border:3px solid #6b4a2b;border-radius:6px;overflow:hidden}.q{width:40px;height:40px;display:flex;align-items:center;justify-content:center}.q.d{background:#8b6b4a}.q.l{background:#e8d5b0}
+.pc{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:inset 0 -3px 0 #0004}.pc.r{background:#d63c31}.pc.b{background:#2b2b2b;color:#fff}.q.sel{outline:3px solid #f1c40f;outline-offset:-3px}.q.tg::after{content:'';width:14px;height:14px;border-radius:50%;background:#f1c40faa}.q.can{box-shadow:inset 0 0 0 3px #2ecc7199}</style>
+<div class="card"><div class="stats">You 🔴 <b id="rs">12</b> · CPU ⚫ <b id="bs">12</b></div><div id="g"></div><div class="msg" id="m">Your move. Captures are mandatory.</div><button class="alt" id="r">New game</button></div>
+<script>
+let cpuTimer;
+const $=id=>document.getElementById(id);let b,sel,chain,turn,over,cells=[];
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){const d=document.createElement('div');d.className='q '+((r+c)%2?'d':'l');d.onclick=()=>click(r,c);$('g').appendChild(d);cells.push(d)}
+const dirs=p=>p.k?[[-1,-1],[-1,1],[1,-1],[1,1]]:p.p==='r'?[[-1,-1],[-1,1]]:[[1,-1],[1,1]];const inb=(r,c)=>r>=0&&r<8&&c>=0&&c<8;
+function pieceMoves(B,r,c){const p=B[r][c],caps=[],sim=[];for(const[dr,dc]of dirs(p)){const r1=r+dr,c1=c+dc,r2=r+2*dr,c2=c+2*dc;
+if(inb(r2,c2)&&B[r1][c1]&&B[r1][c1].p!==p.p&&!B[r2][c2])caps.push({fr:r,fc:c,tr:r2,tc:c2,cr:r1,cc:c1});if(inb(r1,c1)&&!B[r1][c1])sim.push({fr:r,fc:c,tr:r1,tc:c1})}return{caps,sim}}
+function legal(B,pl,ch){if(ch)return pieceMoves(B,ch[0],ch[1]).caps;let caps=[],sim=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(B[r][c]&&B[r][c].p===pl){const m=pieceMoves(B,r,c);caps.push(...m.caps);sim.push(...m.sim)}return caps.length?caps:sim}
+function apply(B,m){const p=B[m.fr][m.fc];B[m.tr][m.tc]=p;B[m.fr][m.fc]=null;let crowned=false;if(m.cr!==undefined)B[m.cr][m.cc]=null;if(!p.k&&((p.p==='r'&&m.tr===0)||(p.p==='b'&&m.tr===7))){p.k=true;crowned=true}
+return m.cr!==undefined&&!crowned&&pieceMoves(B,m.tr,m.tc).caps.length?[m.tr,m.tc]:null}
+function draw(){const L=turn==='r'&&!over?legal(b,'r',chain):[];cells.forEach((d,i)=>{const r=i>>3,c=i&7,p=b[r][c];d.innerHTML=p?`<div class="pc ${p.p}">${p.k?'👑':''}</div>`:'';
+d.classList.toggle('sel',!!sel&&sel[0]===r&&sel[1]===c);d.classList.toggle('tg',!!sel&&L.some(m=>m.fr===sel[0]&&m.fc===sel[1]&&m.tr===r&&m.tc===c));d.classList.toggle('can',!sel&&L.some(m=>m.fr===r&&m.fc===c))});
+const cnt=p=>b.flat().filter(q=>q&&q.p===p).length;$('rs').textContent=cnt('r');$('bs').textContent=cnt('b')}
+function click(r,c){if(over||turn!=='r')return;const L=legal(b,'r',chain);if(b[r][c]&&b[r][c].p==='r'&&!chain){if(L.some(m=>m.fr===r&&m.fc===c))sel=[r,c];draw();return}
+if(!sel)return;const m=L.find(m=>m.fr===sel[0]&&m.fc===sel[1]&&m.tr===r&&m.tc===c);if(!m)return;chain=apply(b,m);if(chain){sel=chain;$('m').textContent='Keep jumping!';draw();return}
+sel=null;turn='b';draw();if(!checkEnd())cpuTimer=setTimeout(cpu,500)}
+function evalMove(m){const B=b.map(r=>r.map(p=>p&&{...p}));let s=0;if(m.cr!==undefined)s+=B[m.cr][m.cc].k?3:2;const wasK=B[m.fr][m.fc].k;const ch=apply(B,m);if(ch)s+=1.5;if(!wasK&&B[m.tr][m.tc].k)s+=1.5;
+const opp=legal(B,'r',null);if(opp.some(o=>o.cr===m.tr&&o.cc===m.tc))s-=B[m.tr][m.tc].k?3:2;if(m.fr===0&&!wasK)s-=.3;return s+Math.random()*.4}
+function cpu(){if(over)return;const L=legal(b,'b',chain);if(!L.length){checkEnd();return}let best=L[0],bs=-1e9;for(const m of L){const s=evalMove(m);if(s>bs){bs=s;best=m}}
+chain=apply(b,best);draw();if(chain){cpuTimer=setTimeout(cpu,400);return}turn='r';$('m').textContent='Your move.';draw();checkEnd()}
+function checkEnd(){const L=legal(b,turn,null);if(!L.length){over=true;$('m').textContent=turn==='r'?'CPU wins!':'🎉 You win!';draw();return true}return false}
+function reset(){clearTimeout(cpuTimer);b=[...Array(8)].map((_,r)=>[...Array(8)].map((_,c)=>(r+c)%2&&r<3?{p:'b',k:false}:(r+c)%2&&r>4?{p:'r',k:false}:null));sel=null;chain=null;turn='r';over=false;$('m').textContent='Your move. Captures are mandatory.';draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

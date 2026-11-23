@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Number Path | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="number-path"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Number Path</h1>
+<style>#g{display:inline-grid;gap:3px}.n{width:46px;height:46px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;cursor:pointer;user-select:none;color:var(--ink);padding:0;margin:0}
+.n.giv{background:var(--line)}.n.on{background:#3b6fe0;color:#fff}.n.head{box-shadow:0 0 0 3px #f1c40f}.n.next{border:2px dashed #3b6fe0}</style>
+<div class="card"><p class="muted">Start at 1 and visit <b>every</b> square once, moving up/down/left/right. Your path must pass the fixed numbers at the right step.</p>
+<div class="row"><button class="alt" data-n="5">5×5</button><button class="alt" data-n="6">6×6</button><button class="alt" data-n="7">7×7</button></div>
+<div id="g"></div><div class="msg" id="m">Tap squares next to the yellow one to extend. Tap an earlier square to go back.</div></div>
+<script>
+const $=id=>document.getElementById(id);let N,sol,giv,path,won;
+const nb=i=>{const x=i%N,y=Math.floor(i/N),o=[];if(x>0)o.push(i-1);if(x<N-1)o.push(i+1);if(y>0)o.push(i-N);if(y<N-1)o.push(i+N);return o};
+function walk(){for(let tries=0;tries<500;tries++){const s=Math.floor(Math.random()*N*N),p=[s],vis=new Set(p);while(p.length<N*N){const c=nb(p.at(-1)).filter(j=>!vis.has(j));if(!c.length)break;
+c.sort((a,b)=>nb(a).filter(j=>!vis.has(j)).length-nb(b).filter(j=>!vis.has(j)).length+(Math.random()-.5)*.8);const j=c[0];p.push(j);vis.add(j)}if(p.length===N*N)return p}return null}
+function gen(n){N=n;sol=walk()??Array.from({length:N*N},(_,i)=>{const row=Math.floor(i/N),col=i%N;return row*N+(row%2?N-1-col:col)});giv={};sol.forEach((cell,k)=>{if(k===0||k===N*N-1||Math.random()<.28)giv[cell]=k+1});path=[sol[0]];won=false;$('g').style.setProperty('--columns',N);$('m').textContent='Tap squares next to the yellow one to extend. Tap an earlier square to go back.';draw()}
+function click(i){if(won)return;const k=path.indexOf(i);if(k>=0){path=path.slice(0,k+1);draw();return}if(!nb(path.at(-1)).includes(i))return;const step=path.length+1;
+if(giv[i]!==undefined&&giv[i]!==step){$('m').textContent=`That square must be step ${giv[i]}, not ${step}.`;return}
+if(Object.entries(giv).some(([c,v])=>v===step&&+c!==i)){$('m').textContent=`Step ${step} must land on the square marked ${step}.`;return}
+path.push(i);$('m').textContent='';if(path.length===N*N){won=true;$('m').textContent='🎉 Perfect path!'}draw()}
+function draw(){$('g').innerHTML='';const head=path.at(-1),nx=nb(head);for(let i=0;i<N*N;i++){const b=document.createElement('button');const k=path.indexOf(i);b.className='n'+(giv[i]!==undefined?' giv':'')+(k>=0?' on':'')+(i===head?' head':'')+(!won&&k<0&&nx.includes(i)?' next':'');
+b.textContent=k>=0?k+1:giv[i]!==undefined?giv[i]:'';b.onclick=()=>click(i);$('g').appendChild(b)}}
+document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>gen(+b.dataset.n));gen(5);
+</script>
+
+</div></body></html>

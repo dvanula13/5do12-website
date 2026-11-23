@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cave Glider | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="cave-glider"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Cave Glider</h1>
+<div class="card"><div class="stats">Distance <b id="s">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="400" height="300"></canvas><div class="msg" id="m">Hold mouse/touch or Space to rise. Release to sink.</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=400,H=300,SW=10;
+let cols,off,p,hold=false,on=false,dist,best=0,cy,gap,speed,rocks,last;
+const down=e=>{hold=true;if(e.cancelable)e.preventDefault()},up=()=>hold=false;
+c.addEventListener('pointerdown',down);addEventListener('pointerup',up);addEventListener('pointercancel',up);addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();hold=true}});addEventListener('keyup',e=>{if(e.key===' ')hold=false});
+function col(){cy+=(Math.random()-.5)*22;cy=Math.max(gap/2+10,Math.min(H-gap/2-10,cy));const k={t:cy-gap/2,b:cy+gap/2,r:null};
+if(Math.random()<.04&&dist>20)k.r={y:k.t+20+Math.random()*(gap-60),h:24};return k}
+function start(){cy=H/2;gap=210;speed=3;dist=0;off=0;cols=[];for(let i=0;i<W/SW+3;i++)cols.push(col());p={y:H/2,v:0};on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function loop(t){if(!on)return;const dt=Math.min(50,t-last)/16;last=t;
+p.v+=(hold?-.42:.32)*dt;p.v=Math.max(-6,Math.min(6,p.v));p.y+=p.v*dt;off+=speed*dt;dist+=speed*dt/10;speed=3+dist/400;gap=Math.max(105,210-dist/12);
+while(off>=SW){off-=SW;cols.shift();cols.push(col())}
+const i=Math.floor((80+off)/SW),k=cols[i];let dead=p.y-7<k.t||p.y+7>k.b;
+for(let j=i-1;j<=i+1;j++){const q=cols[j];if(q&&q.r){const rx=j*SW-off;if(80+7>rx&&80-7<rx+SW*2&&p.y+7>q.r.y&&p.y-7<q.r.y+q.r.h)dead=true}}
+x.clearRect(0,0,W,H);x.fillStyle='#5d4a3a';x.beginPath();x.moveTo(0,0);cols.forEach((q,j)=>x.lineTo(j*SW-off,q.t));x.lineTo(W+SW,0);x.fill();
+x.beginPath();x.moveTo(0,H);cols.forEach((q,j)=>x.lineTo(j*SW-off,q.b));x.lineTo(W+SW,H);x.fill();
+x.fillStyle='#8a6d55';cols.forEach((q,j)=>{if(q.r)x.fillRect(j*SW-off,q.r.y,SW*2,q.r.h)});
+x.save();x.translate(80,p.y);x.rotate(p.v*.08);x.fillStyle='#3b9ae1';x.beginPath();x.moveTo(12,0);x.lineTo(-10,-8);x.lineTo(-6,0);x.lineTo(-10,8);x.closePath();x.fill();
+if(hold){x.fillStyle='#ffb347';x.beginPath();x.moveTo(-7,-3);x.lineTo(-16-Math.random()*6,0);x.lineTo(-7,3);x.fill()}x.restore();
+$('s').textContent=Math.floor(dist);
+if(dead){on=false;if(dist>best){best=Math.floor(dist);$('b').textContent=best}$('m').textContent=`💥 Crashed at ${Math.floor(dist)}m`;$('go').disabled=false;$('go').textContent='Again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

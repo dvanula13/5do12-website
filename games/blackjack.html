@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackjack | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="blackjack"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Blackjack</h1>
+<style>.hand{display:flex;gap:6px;justify-content:center;min-height:84px;margin:6px 0}.cd{width:56px;height:80px;border-radius:8px;background:#fff;color:#222;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}.cd.r{color:#d0312d}.cd.back{background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 6px,#fff3 6px,#fff3 12px)}</style>
+<div class="card"><div class="stats">Play chips <b id="ch">100</b> · Bet <b id="bt">10</b></div>
+<p class="muted">Play with virtual chips. No real money or prizes.</p>
+<div class="muted">Dealer <span id="dv"></span></div><div class="hand" id="dh"></div><div class="muted">You <span id="pv"></span></div><div class="hand" id="ph"></div>
+<div class="msg" id="m">Place your bet and deal.</div>
+<div class="row" id="betrow"><button class="alt" data-b="10">10</button><button class="alt" data-b="25">25</button><button class="alt" data-b="50">50</button><button id="deal">Deal</button></div>
+<div class="row" id="playrow" style="display:none"><button id="hit">Hit</button><button id="stand">Stand</button><button id="dbl" class="alt">Double</button></div></div>
+<script>
+const $=id=>document.getElementById(id),S='♠♥♦♣';let deck,P,D,chips=100,bet=10,hide;
+function newDeck(){deck=[];for(const s of S)for(const r of['A','2','3','4','5','6','7','8','9','10','J','Q','K'])deck.push({r,s});deck.sort(()=>Math.random()-.5)}
+const val=h=>{let t=0,a=0;for(const c of h){t+=c.r==='A'?11:isNaN(c.r)?10:+c.r;if(c.r==='A')a++}while(t>21&&a){t-=10;a--}return t};
+const card=c=>`<div class="cd ${'♥♦'.includes(c.s)?'r':''}">${c.r}${c.s}</div>`;
+function draw(){$('ph').innerHTML=P.map(card).join('');$('dh').innerHTML=D.map((c,i)=>i===1&&hide?'<div class="cd back"></div>':card(c)).join('');$('pv').textContent='('+val(P)+')';$('dv').textContent=hide?'':'('+val(D)+')';$('ch').textContent=chips;$('bt').textContent=bet}
+function end(msg,mult){chips+=Math.round(bet*mult);hide=false;draw();$('m').textContent=msg;$('playrow').style.display='none';$('betrow').style.display='';
+if(chips<10){$('m').textContent+=' Out of chips — reset to 100.';chips=100;draw()}}
+document.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bet=Math.min(+b.dataset.b,chips);draw()});
+$('deal').onclick=()=>{bet=Math.min(bet,chips);if(deck===undefined||deck.length<15)newDeck();chips-=bet;P=[deck.pop(),deck.pop()];D=[deck.pop(),deck.pop()];hide=true;
+$('betrow').style.display='none';$('playrow').style.display='';$('dbl').disabled=chips<bet;$('m').textContent='Hit or stand?';draw();
+if(val(D)===21){end(val(P)===21?'Both have Blackjack — push.':'Dealer has Blackjack.',val(P)===21?1:0)}else if(val(P)===21){end('🃏 Blackjack! Pays 3:2',2.5)}};
+$('hit').onclick=()=>{P.push(deck.pop());$('dbl').disabled=true;draw();if(val(P)>21)end('Bust! You lose.',0);else if(val(P)===21)$('stand').onclick()};
+$('stand').onclick=()=>{hide=false;while(val(D)<17)D.push(deck.pop());const p=val(P),d=val(D);
+if(d>21)end('Dealer busts — you win!',2);else if(p>d)end('You win!',2);else if(p<d)end('Dealer wins.',0);else end('Push.',1)};
+$('dbl').onclick=()=>{chips-=bet;bet*=2;P.push(deck.pop());draw();if(val(P)>21){end('Bust on the double!',0);bet/=2}else{$('stand').onclick();bet/=2;draw()}};
+P=[];D=[];draw();
+</script>
+
+</div></body></html>

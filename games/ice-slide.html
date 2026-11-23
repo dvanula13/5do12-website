@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ice Slide | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="ice-slide"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Ice Slide</h1>
+<div class="card"><p class="muted">On ice you slide until you hit a rock or wall. Stop exactly on the 🏁.</p><div class="stats">Level <b id="lv">1</b> · Moves <b id="mv">0</b> · Par <b id="par">0</b></div>
+<canvas id="c" width="320" height="320"></canvas><div class="msg" id="m">Arrows / WASD / swipe / buttons.</div>
+<div class="row"><button class="alt" data-d="0,-1">▲</button><button class="alt" data-d="-1,0">◀</button><button class="alt" data-d="1,0">▶</button><button class="alt" data-d="0,1">▼</button><button class="alt" id="rs">↺ Retry</button></div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),N=8,Z=40;let lv=1,rock,start,goal,p,mv,par,anim=null,advance,won;
+function slide(R,px,py,dx,dy){while(true){const X=px+dx,Y=py+dy;if(X<0||Y<0||X>=N||Y>=N||R[Y*N+X])return[px,py];px=X;py=Y}}
+function gen(){for(;;){rock=[...Array(N*N)].map(()=>Math.random()<.12+Math.min(.08,lv*.01));const free=[...Array(N*N).keys()].filter(i=>!rock[i]);if(!free.length)continue;const s=free[Math.floor(Math.random()*free.length)];
+const dist=new Map([[s,0]]),q=[s];while(q.length){const i=q.shift();for(const[dx,dy]of[[0,1],[0,-1],[1,0],[-1,0]]){const[a,b]=slide(rock,i%N,Math.floor(i/N),dx,dy),j=b*N+a;if(!dist.has(j)){dist.set(j,dist.get(i)+1);q.push(j)}}}
+let best=-1,bd=0;for(const[k,d]of dist)if(d>bd){bd=d;best=k}const want=Math.min(3+Math.floor(lv/2),9);if(bd>=want){start=s;goal=best;par=bd;break}}
+$('lv').textContent=lv;$('par').textContent=par;reset()}
+function reset(){cancelAnimationFrame(anim);anim=null;p={x:start%N,y:Math.floor(start/N)};mv=0;won=false;$('mv').textContent=0;$('m').textContent='Arrows / WASD / swipe / buttons.';draw(p.x,p.y)}
+function move(dx,dy){if(anim||won)return;const[tx,ty]=slide(rock,p.x,p.y,dx,dy);if(tx===p.x&&ty===p.y)return;mv++;$('mv').textContent=mv;const fx=p.x,fy=p.y,t0=performance.now(),dur=60*Math.max(Math.abs(tx-fx),Math.abs(ty-fy));
+(function step(t){const k=Math.min(1,(t-t0)/dur);draw(fx+(tx-fx)*k,fy+(ty-fy)*k);if(k<1)anim=requestAnimationFrame(step);else{anim=null;p={x:tx,y:ty};
+if(ty*N+tx===goal){won=true;$('m').textContent=mv<=par?`⭐ Perfect! Solved in par (${mv}). Next level...`:`🎉 Solved in ${mv} moves (par ${par}). Next level...`;advance=setTimeout(()=>{lv++;gen()},1300)}}})(t0)}
+function draw(px,py){const g=x.createLinearGradient(0,0,320,320);g.addColorStop(0,'#d6ecfa');g.addColorStop(1,'#a9d3f0');x.fillStyle=g;x.fillRect(0,0,320,320);x.strokeStyle='#ffffff88';
+for(let i=1;i<N;i++){x.beginPath();x.moveTo(i*Z,0);x.lineTo(i*Z,320);x.moveTo(0,i*Z);x.lineTo(320,i*Z);x.stroke()}x.font='30px serif';x.textAlign='center';x.textBaseline='middle';
+for(let i=0;i<N*N;i++)if(rock[i])x.fillText('🪨',(i%N)*Z+20,Math.floor(i/N)*Z+22);x.fillText('🏁',(goal%N)*Z+20,Math.floor(goal/N)*Z+22);x.fillText('🐧',px*Z+20,py*Z+22)}
+const K={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]};addEventListener('keydown',e=>{const k=K[e.key];if(k){e.preventDefault();move(...k)}});
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>move(...b.dataset.d.split(',').map(Number)));$('rs').onclick=()=>{clearTimeout(advance);reset()};
+let ts;c.addEventListener('touchstart',e=>{ts=e.touches[0]},{passive:true});c.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-ts.clientX,dy=t.clientY-ts.clientY;if(Math.max(Math.abs(dx),Math.abs(dy))>15)Math.abs(dx)>Math.abs(dy)?move(Math.sign(dx),0):move(0,Math.sign(dy))});
+gen();
+</script>
+
+</div></body></html>

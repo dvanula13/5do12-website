@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bounce Lines | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="bounce-lines"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Bounce Lines</h1>
+<div class="card"><div class="stats">Level <b id="lv">1</b>/8 · Lines <b id="ln">0</b>/<b id="mx">1</b></div>
+<canvas id="c" width="360" height="480" style="touch-action:none"></canvas><div class="msg" id="m">Drag to draw lines, then press Drop. Guide the ball into the cup.</div>
+<div class="row"><button id="drop">▶ Drop</button><button class="alt" id="undo">Undo</button><button class="alt" id="clr">Clear</button></div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),BR=8;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const LV=[{s:[60,40],cup:[280,470],r:[],n:1},{s:[300,40],cup:[60,470],r:[[100,240,220,14]],n:2},{s:[180,30],cup:[180,470],r:[[120,200,120,14]],n:2},
+{s:[40,40],cup:[300,250],r:[[0,300,360,14]],n:2},{s:[320,40],cup:[320,470],r:[[240,150,120,14],[180,330,180,14]],n:3},{s:[180,40],cup:[50,270],r:[[0,284,110,196],[150,120,14,200]],n:2},
+{s:[40,40],cup:[320,120],r:[[230,150,130,330],[100,60,14,220]],n:3},{s:[180,40],cup:[180,300],r:[[110,90,140,14],[60,320,60,14],[240,320,60,14]],n:3}];
+let li=0,lines=[],ball=null,drag=null,cupSegs,segs,won=false,timer;
+function cupInfo(){const[cx,by]=LV[li].cup;return{l:cx-28,r:cx+28,t:by-40,b:by}}
+function build(){const L=LV[li],cu=cupInfo();cupSegs=[[cu.l,cu.t,cu.l,cu.b],[cu.l,cu.b,cu.r,cu.b],[cu.r,cu.b,cu.r,cu.t]];segs=[...cupSegs];
+for(const[a,b,w,h]of L.r)segs.push([a,b,a+w,b],[a+w,b,a+w,b+h],[a+w,b+h,a,b+h],[a,b+h,a,b]);}
+function load(){ball=null;drag=null;won=false;lines=[];build();$('lv').textContent=li+1;$('mx').textContent=LV[li].n;$('ln').textContent=0;$('m').textContent='Drag to draw lines, then press Drop.';draw()}
+const pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*360/r.width,(e.clientY-r.top)*480/r.height]};
+c.addEventListener('pointerdown',e=>{if(ball||lines.length>=LV[li].n)return;const p=pt(e);drag=[...p,...p];c.setPointerCapture(e.pointerId)});
+c.addEventListener('pointermove',e=>{if(drag){const p=pt(e);drag[2]=p[0];drag[3]=p[1];draw()}});
+addEventListener('pointerup',()=>{if(drag&&Math.hypot(drag[2]-drag[0],drag[3]-drag[1])>15){lines.push(drag);$('ln').textContent=lines.length}drag=null;draw()});
+c.addEventListener('pointercancel',()=>{drag=null;draw()});
+$('undo').onclick=()=>{if(!ball){lines.pop();$('ln').textContent=lines.length;draw()}};$('clr').onclick=()=>{cancelAnimationFrame(timer);if(won)return;ball=null;lines=[];$('ln').textContent=0;$('m').textContent='';draw()};
+$('drop').onclick=()=>{if(won){li=(li+1)%LV.length;load();$('drop').textContent='▶ Drop';return}ball={x:LV[li].s[0],y:LV[li].s[1],vx:0,vy:0,t:0};$('m').textContent='';cancelAnimationFrame(timer);timer=requestAnimationFrame(sim)};
+function collide(s){const[ax,ay,bx,by]=s,dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;let t=((ball.x-ax)*dx+(ball.y-ay)*dy)/l2;t=Math.max(0,Math.min(1,t));const px=ax+t*dx,py=ay+t*dy,ex=ball.x-px,ey=ball.y-py,d=Math.hypot(ex,ey);
+if(d<BR&&d>0){const nx=ex/d,ny=ey/d;ball.x=px+nx*BR;ball.y=py+ny*BR;const vn=ball.vx*nx+ball.vy*ny;if(vn<0){ball.vx-=1.7*vn*nx;ball.vy-=1.7*vn*ny;ball.vx*=.99}}}
+function sim(){if(!ball)return;for(let k=0;k<4;k++){ball.vy+=.06;ball.x+=ball.vx;ball.y+=ball.vy;for(const s of segs)collide(s);for(const s of lines)collide(s)}ball.t++;
+const cu=cupInfo();if(ball.x>cu.l&&ball.x<cu.r&&ball.y>cu.t+4&&ball.y<cu.b){won=true;$('m').textContent=li===LV.length-1?'🏆 All levels done! Press Next to loop.':'🎉 In the cup!';$('drop').textContent='Next ▶';draw();return}
+if(ball.y>520||ball.x<-30||ball.x>390||ball.t>900){$('m').textContent='Missed! Adjust your lines and Drop again.';ball=null;draw();return}draw();timer=requestAnimationFrame(sim)}
+function draw(){x.clearRect(0,0,360,480);const L=LV[li];x.fillStyle=css('--muted');for(const[a,b,w,h]of L.r)x.fillRect(a,b,w,h);
+const cu=cupInfo();x.strokeStyle='#2ecc71';x.lineWidth=5;x.beginPath();x.moveTo(cu.l,cu.t);x.lineTo(cu.l,cu.b);x.lineTo(cu.r,cu.b);x.lineTo(cu.r,cu.t);x.stroke();
+x.strokeStyle=css('--accent');x.lineWidth=4;x.lineCap='round';for(const s of[...lines,...(drag?[drag]:[])]){x.beginPath();x.moveTo(s[0],s[1]);x.lineTo(s[2],s[3]);x.stroke()}
+x.fillStyle=css('--accent2');const b=ball||{x:L.s[0],y:L.s[1]};x.globalAlpha=ball?1:.5;x.beginPath();x.arc(b.x,b.y,BR,0,7);x.fill();x.globalAlpha=1}
+load();
+</script>
+
+</div></body></html>

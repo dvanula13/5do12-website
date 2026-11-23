@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sky Hopper | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="sky-hopper"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Sky Hopper</h1>
+<div class="card"><div class="stats">Height <b id="s">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="360" height="540"></canvas><div class="msg" id="m">← → or hold left/right side of the screen. Green = spring, cracked = breaks.</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=360,H=540;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let p,pl,sc,on=false,best=0,keys={},touch=0,topY,last;
+addEventListener('keydown',e=>keys[e.key]=1);addEventListener('keyup',e=>keys[e.key]=0);
+c.addEventListener('pointerdown',e=>{const r=c.getBoundingClientRect();touch=e.clientX-r.left<r.width/2?-1:1});addEventListener('pointerup',()=>touch=0);addEventListener('pointercancel',()=>touch=0);
+function plat(y){const r=Math.random(),hard=Math.min(1,sc/3000);return{x:Math.random()*(W-60),y,w:60,t:r<.08?'s':r<.08+.15*hard+.05?'b':r<.3+.2*hard?'m':'n',d:Math.random()<.5?1:-1,gone:false}}
+function start(){sc=0;p={x:W/2,y:H-80,vx:0,vy:-10};pl=[{x:W/2-30,y:H-40,w:60,t:'n'}];topY=H-40;while(topY>-40){topY-=60+Math.random()*30;pl.push(plat(topY))}
+on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function loop(t){if(!on)return;const dt=Math.min(40,t-last)/16;last=t;const dir=(keys.ArrowLeft||keys.a?-1:0)+(keys.ArrowRight||keys.d?1:0)||touch;
+p.vx+=dir*.8*dt;p.vx*=.88;p.x+=p.vx*dt;if(p.x<-14)p.x=W+14;if(p.x>W+14)p.x=-14;p.vy+=.35*dt;p.y+=p.vy*dt;
+if(p.vy>0)for(const q of pl){if(!q.gone&&p.x>q.x-6&&p.x<q.x+q.w+6&&p.y+14>=q.y&&p.y+14-p.vy*dt<=q.y+6){if(q.t==='b'){q.gone=true;continue}p.vy=q.t==='s'?-17:-10.5;break}}
+pl.forEach(q=>{if(q.t==='m'){q.x+=q.d*1.5*dt;if(q.x<0||q.x>W-q.w)q.d*=-1}if(q.gone)q.y+=6*dt});
+if(p.y<H*.4){const d=H*.4-p.y;p.y+=d;pl.forEach(q=>q.y+=d);topY+=d;sc+=d}
+pl=pl.filter(q=>q.y<H+20);while(topY>-40){topY-=Math.min(115,55+Math.random()*30+sc/150);pl.push(plat(topY))}
+x.clearRect(0,0,W,H);pl.forEach(q=>{x.fillStyle=q.t==='s'?'#2ecc71':q.t==='b'?'#a0785a':q.t==='m'?'#3498db':css('--muted');x.globalAlpha=q.gone?.4:1;x.beginPath();x.roundRect(q.x,q.y,q.w,10,5);x.fill();
+if(q.t==='b'){x.strokeStyle=css('--bg');x.beginPath();x.moveTo(q.x+28,q.y);x.lineTo(q.x+34,q.y+10);x.stroke()}if(q.t==='s'){x.fillStyle='#27ae60';x.fillRect(q.x+24,q.y-6,12,6)}});x.globalAlpha=1;
+x.fillStyle=css('--accent2');x.beginPath();x.arc(p.x,p.y,14,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(p.x-5+p.vx,p.y-3,4,0,7);x.arc(p.x+5+p.vx,p.y-3,4,0,7);x.fill();
+$('s').textContent=Math.floor(sc/10);
+if(p.y>H+30){on=false;const s=Math.floor(sc/10);if(s>best){best=s;$('b').textContent=s}$('m').textContent=`You fell! Height ${s}`;$('go').disabled=false;$('go').textContent='Again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

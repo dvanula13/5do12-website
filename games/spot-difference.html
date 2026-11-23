@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spot the Difference | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="spot-difference"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Spot the Difference</h1>
+<style>.bd{display:inline-grid;grid-template-columns:repeat(6,36px);gap:2px;background:var(--line);padding:4px;border-radius:8px;margin:4px}.e{width:36px;height:36px;font-size:24px;display:flex;align-items:center;justify-content:center;background:var(--card);cursor:pointer;border-radius:4px;user-select:none}.e.f{background:#2e9e5b66}.e.w{background:#e8564a66}.boards{display:flex;flex-wrap:wrap;justify-content:center}</style>
+<div class="card"><div class="stats">Level <b id="lv">1</b> · Found <b id="f">0</b>/<b id="tot">5</b> · Time <b id="t">60</b></div>
+<div class="boards"><div class="bd" id="A"></div><div class="bd" id="B"></div></div><div class="msg" id="m">The pictures differ in a few spots. Tap them on either side!</div><button id="go">Start</button></div>
+<script>
+const SETS=[['🌲','🌳','🌴','🌵','🍄','🌷','🌻','🐝','🐞','🦋'],['🍎','🍏','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍒'],['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯'],['⚽','🏀','🏈','⚾','🎾','🏐','🏉','🎱','🏓','🥏']];
+const $=id=>document.getElementById(id);let A,B,diffs,found,lv=1,tl,iv,on=false;
+function round(){const S=SETS[Math.floor(Math.random()*SETS.length)],pal=S.slice(0,Math.min(10,4+lv));A=[...Array(36)].map(()=>pal[Math.floor(Math.random()*pal.length)]);B=[...A];
+const n=Math.min(8,4+lv);diffs=new Set;while(diffs.size<n)diffs.add(Math.floor(Math.random()*36));for(const i of diffs){let v;do v=pal[Math.floor(Math.random()*pal.length)];while(v===A[i]);B[i]=v}
+found=new Set;$('tot').textContent=n;$('f').textContent=0;$('lv').textContent=lv;draw()}
+function draw(){for(const[id,G]of[['A',A],['B',B]]){$(id).innerHTML='';G.forEach((e,i)=>{const d=document.createElement('div');d.className='e'+(found.has(i)?' f':'');d.textContent=e;d.onclick=()=>tap(i,d);$(id).appendChild(d)})}}
+function tap(i,d){if(!on||tl<=0||found.has(i))return;if(diffs.has(i)){found.add(i);$('f').textContent=found.size;draw();if(found.size===diffs.size){lv++;tl+=10;$('t').textContent=tl;$('m').textContent='✨ All found! +10s';round()}}
+else{tl=Math.max(0,tl-3);$('t').textContent=tl;d.classList.add('w');setTimeout(()=>d.classList.remove('w'),300);$('m').textContent='Not there! −3s'}}
+$('go').onclick=()=>{lv=1;tl=60;$('t').textContent=tl;on=true;$('go').disabled=true;$('m').textContent='';round();clearInterval(iv);iv=setInterval(()=>{tl--;$('t').textContent=Math.max(0,tl);if(tl<=0){clearInterval(iv);on=false;diffs.forEach(i=>found.add(i));draw();$('m').textContent=`⏰ Time! You reached level ${lv}.`;$('go').disabled=false}},1000)};
+A=Array(36).fill('❔');B=[...A];diffs=new Set;found=new Set;draw();
+</script>
+
+</div></body></html>

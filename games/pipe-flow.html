@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pipe Flow | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="pipe-flow"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Pipe Flow</h1>
+<style>#g{display:inline-grid;gap:2px;background:var(--line);padding:2px;border-radius:8px}.p{width:50px;height:50px;background:var(--card);cursor:pointer;padding:0;margin:0;border:0;border-radius:4px}.p svg{width:100%;height:100%;transition:transform .15s}</style>
+<div class="card"><p class="muted">Tap pipes to rotate them. Connect every pipe to the water source 💧.</p><div class="row"><button class="alt" data-n="5">5×5</button><button class="alt" data-n="6">6×6</button><button class="alt" data-n="7">7×7</button></div>
+<div class="stats">Moves <b id="mv">0</b> · Connected <b id="cn">0</b></div><div id="g"></div><div class="msg" id="m"></div></div>
+<script>
+const $=id=>document.getElementById(id),DX=[0,1,0,-1],DY=[-1,0,1,0];let N,t,src,mv,won;
+const rot=m=>((m<<1)|(m>>3))&15;
+function gen(n){N=n;let vis;do{t=Array(N*N).fill(0);src=Math.floor(N*N/2);vis=new Uint8Array(N*N);const st=[src];vis[src]=1;
+while(st.length){const i=st[Math.random()<.7?st.length-1:Math.floor(Math.random()*st.length)],x=i%N,y=Math.floor(i/N);const o=[0,1,2,3].filter(d=>{const X=x+DX[d],Y=y+DY[d];return X>=0&&Y>=0&&X<N&&Y<N&&!vis[Y*N+X]&&(t[i]&15).toString(2).split('1').length<4});
+if(!o.length){st.splice(st.indexOf(i),1);continue}const d=o[Math.floor(Math.random()*o.length)],j=(y+DY[d])*N+x+DX[d];t[i]|=1<<d;t[j]|=1<<((d+2)%4);vis[j]=1;st.push(j)}}while(vis.includes(0));
+t=t.map(m=>{let k=Math.floor(Math.random()*4);while(k--)m=rot(m);return m});mv=0;won=false;$('mv').textContent=0;$('m').textContent='';$('g').style.setProperty('--columns',N);draw()}
+function flow(){const on=new Set([src]),st=[src];while(st.length){const i=st.pop(),x=i%N,y=Math.floor(i/N);for(let d=0;d<4;d++){if(!(t[i]>>d&1))continue;const X=x+DX[d],Y=y+DY[d];if(X<0||Y<0||X>=N||Y>=N)continue;const j=Y*N+X;if(t[j]>>((d+2)%4)&1&&!on.has(j)){on.add(j);st.push(j)}}}return on}
+function svg(m,wet,isSrc){const c=wet?'#3b9ae1':'#8a8f98',L=[[25,0],[50,25],[25,50],[0,25]];let s=`<svg viewBox="0 0 50 50">`;for(let d=0;d<4;d++)if(m>>d&1)s+=`<line x1="25" y1="25" x2="${L[d][0]}" y2="${L[d][1]}" stroke="${c}" stroke-width="10" stroke-linecap="round"/>`;
+s+=isSrc?`<circle cx="25" cy="25" r="12" fill="#1f6fb2"/><text x="25" y="30" font-size="14" text-anchor="middle">💧</text>`:`<circle cx="25" cy="25" r="6" fill="${c}"/>`;return s+'</svg>'}
+function draw(){const on=flow();$('g').innerHTML='';t.forEach((m,i)=>{const b=document.createElement('button');b.className='p';b.innerHTML=svg(m,on.has(i),i===src);b.onclick=()=>{if(won)return;t[i]=rot(t[i]);mv++;$('mv').textContent=mv;draw()};$('g').appendChild(b)});
+$('cn').textContent=on.size+'/'+N*N;if(on.size===N*N&&!won){won=true;$('m').textContent=`🎉 All connected in ${mv} moves!`}}
+document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>gen(+b.dataset.n));gen(5);
+</script>
+
+</div></body></html>

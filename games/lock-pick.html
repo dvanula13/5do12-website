@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lock Pick | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="lock-pick"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Lock Pick</h1>
+<div class="card"><div class="stats">Level <b id="lv">1</b> · Pins left <b id="pl">1</b> · Best <b id="b">1</b></div>
+<canvas id="c" width="300" height="300"></canvas><div class="msg" id="m">Tap or press Space to start. Stop the needle on the gold dot.</div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),R=100;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let lv=1,left,a,dir,tgt,passed,state='play',best=1,flashT=0,flashC='';
+const norm=v=>((v%(2*Math.PI))+2*Math.PI)%(2*Math.PI),diff=(p,q)=>{let d=Math.abs(norm(p)-norm(q));return Math.min(d,2*Math.PI-d)};
+function newTgt(){tgt=norm(a+dir*(.9+Math.random()*2.6));passed=false}
+function setup(){left=lv;a=-Math.PI/2;dir=1;newTgt();$('lv').textContent=lv;$('pl').textContent=left;state='play'}
+function tap(){if(state!=='play'){if(state==='win')lv++;setup();$('m').textContent='';return}
+if(diff(a,tgt)<.2){left--;$('pl').textContent=left;dir*=-1;flashT=10;flashC='#2ecc71';if(left<=0){state='win';if(lv+1>best){best=lv+1;$('b').textContent=best}$('m').textContent='🔓 Unlocked! Tap for next lock.';return}newTgt()}
+else fail('Missed!')}
+function fail(msg){state='fail';flashT=20;flashC='#e74c3c';$('m').textContent=msg+' Tap to retry level '+lv+'.'}
+c.addEventListener('pointerdown',tap);addEventListener('keydown',e=>{if(e.key===' '&&!e.repeat){e.preventDefault();tap()}});
+function loop(){if(state==='play'){const sp=Math.min(.11,.035+lv*.004);const before=diff(a,tgt);a+=dir*sp;const after=diff(a,tgt);if(before<.2&&after>=.2&&after>before)passed=true;if(passed&&after>.3)fail('Passed the dot!')}
+x.clearRect(0,0,300,300);x.save();x.translate(150,160);
+x.strokeStyle=css('--muted');x.lineWidth=10;x.beginPath();x.arc(0,-90,40,Math.PI,0);x.stroke();
+x.lineWidth=26;x.strokeStyle=flashT>0?flashC:css('--ink');x.beginPath();x.arc(0,0,R,0,7);x.stroke();if(flashT>0)flashT--;
+if(state==='play'||state==='fail'){x.fillStyle='#f1c40f';x.beginPath();x.arc(Math.cos(tgt)*R,Math.sin(tgt)*R,9,0,7);x.fill()}
+x.strokeStyle=css('--accent2');x.lineWidth=6;x.lineCap='round';x.beginPath();x.moveTo(Math.cos(a)*(R-12),Math.sin(a)*(R-12));x.lineTo(Math.cos(a)*(R+12),Math.sin(a)*(R+12));x.stroke();
+x.fillStyle=css('--ink');x.font='bold 36px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText(state==='win'?'🔓':left,0,0);x.restore();requestAnimationFrame(loop)}
+setup();state='idle';loop();
+</script>
+
+</div></body></html>

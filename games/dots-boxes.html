@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dots and Boxes | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="dots-boxes"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Dots and Boxes</h1>
+<style>#g{display:inline-grid;gap:0;margin:10px auto}.dot{width:12px;height:12px;border-radius:50%;background:var(--ink)}.hl,.vl{background:transparent;border:0;margin:0;padding:0;border-radius:4px;opacity:1}.hl{width:52px;height:12px}.vl{width:12px;height:52px}
+.hl:hover:not(:disabled),.vl:hover:not(:disabled){background:var(--line)}.hl.p,.vl.p{background:#3b6fe0}.hl.c,.vl.c{background:#e8564a}.bx{width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:24px}.bx.p{background:#3b6fe033}.bx.c{background:#e8564a33}</style>
+<div class="card"><p class="muted">Draw lines. Close a box to claim it and go again.</p>
+<div class="stats"><span style="color:#3b6fe0">You <b id="sp">0</b></span><span style="color:#e8564a">CPU <b id="sc">0</b></span></div><div id="g"></div><div class="msg" id="m">Your turn</div><button class="alt" id="r">New game</button></div>
+<script>
+let cpuTimer;
+const N=4,$=id=>document.getElementById(id);let H,V,B,turn,busy,el={};
+const lines=()=>{const o=[];for(let r=0;r<=N;r++)for(let c=0;c<N;c++)o.push(['h',r,c]);for(let r=0;r<N;r++)for(let c=0;c<=N;c++)o.push(['v',r,c]);return o};
+const has=([t,r,c])=>t==='h'?H[r][c]:V[r][c];
+const sides=(r,c)=>!!H[r][c]+!!H[r+1][c]+!!V[r][c]+!!V[r][c+1];
+const adj=([t,r,c])=>(t==='h'?[[r-1,c],[r,c]]:[[r,c-1],[r,c]]).filter(([y,x])=>y>=0&&y<N&&x>=0&&x<N);
+function build(){$('g').style.gridTemplateColumns=Array.from({length:2*N+1},(_,i)=>i%2?'52px':'12px').join(' ');$('g').innerHTML='';
+for(let R=0;R<=2*N;R++)for(let C=0;C<=2*N;C++){let d;if(R%2===0&&C%2===0){d=document.createElement('div');d.className='dot'}
+else if(R%2===0){d=document.createElement('button');d.className='hl';const L=['h',R/2,(C-1)/2];d.onclick=()=>{if(turn==='p'&&!busy)move(L)};el['h'+L[1]+','+L[2]]=d}
+else if(C%2===0){d=document.createElement('button');d.className='vl';const L=['v',(R-1)/2,C/2];d.onclick=()=>{if(turn==='p'&&!busy)move(L)};el['v'+L[1]+','+L[2]]=d}
+else{d=document.createElement('div');d.className='bx';el['b'+(R-1)/2+','+(C-1)/2]=d}$('g').appendChild(d)}}
+function move(L){if(has(L))return;const[t,r,c]=L;(t==='h'?H:V)[r][c]=turn;const e=el[t+r+','+c];e.classList.add(turn);e.disabled=true;let got=false;
+for(const[y,x]of adj(L))if(sides(y,x)===4&&!B[y][x]){B[y][x]=turn;got=true;const b=el['b'+y+','+x];b.classList.add(turn);b.textContent=turn==='p'?'🙂':'🤖'}
+const sp=B.flat().filter(v=>v==='p').length,sc=B.flat().filter(v=>v==='c').length;$('sp').textContent=sp;$('sc').textContent=sc;
+if(sp+sc===N*N){turn=null;$('m').textContent=sp>sc?'🎉 You win!':sp<sc?'CPU wins':'Draw';return}
+if(!got)turn=turn==='p'?'c':'p';$('m').textContent=turn==='p'?'Your turn':'CPU thinking...';if(turn==='c'){busy=true;cpuTimer=setTimeout(cpu,500)}}
+function cpu(){busy=false;const free=lines().filter(l=>!has(l));const done=free.filter(l=>adj(l).some(([y,x])=>sides(y,x)===3));
+const safe=free.filter(l=>adj(l).every(([y,x])=>sides(y,x)<2));const pick=a=>a[Math.floor(Math.random()*a.length)];
+let L=done.length?pick(done):safe.length?pick(safe):null;
+if(!L){let bestL,bestN=1e9;for(const l of free){const[t,r,c]=l;(t==='h'?H:V)[r][c]='x';let n=0;const seen=new Set,st=adj(l).filter(([y,x])=>sides(y,x)===3).map(a=>a+'');
+// count chain length given away
+const tmpH=H.map(a=>[...a]),tmpV=V.map(a=>[...a]);let q=[...st];while(q.length){const k=q.pop();if(seen.has(k))continue;seen.add(k);n++;const[y,x]=k.split(',').map(Number);
+for(const nl of[['h',y,x],['h',y+1,x],['v',y,x],['v',y,x+1]])if(!has(nl)){(nl[0]==='h'?H:V)[nl[1]][nl[2]]='x';for(const[yy,xx]of adj(nl))if(sides(yy,xx)===4||sides(yy,xx)===3)q.push(yy+','+xx)}}
+H=tmpH;V=tmpV;(t==='h'?H:V)[r][c]=null;if(n<bestN){bestN=n;bestL=l}}L=bestL}
+move(L)}
+function reset(){clearTimeout(cpuTimer);H=[...Array(N+1)].map(()=>Array(N).fill(null));V=[...Array(N)].map(()=>Array(N+1).fill(null));B=[...Array(N)].map(()=>Array(N).fill(null));turn='p';busy=false;build();$('sp').textContent=0;$('sc').textContent=0;$('m').textContent='Your turn'}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

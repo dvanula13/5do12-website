@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pig Dice | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="pig-dice"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Pig Dice</h1>
+<div class="card"><p class="muted">Roll to build your turn total. Hold to bank it. Roll a 1 and you lose the turn total. First to 50 wins.</p>
+<div class="stats">You <b id="p0">0</b> · CPU <b id="p1">0</b> · Turn <b id="tt">0</b></div><div class="big" id="d" style="font-size:80px">🎲</div>
+<div class="msg" id="m">Your turn</div><div class="row"><button id="roll">Roll</button><button id="hold" class="alt">Hold</button><button id="new" class="alt" style="display:none">New game</button></div></div>
+<script>
+const F='⚀⚁⚂⚃⚄⚅',$=id=>document.getElementById(id);let sc,tt,cur,over;
+function upd(){$('p0').textContent=sc[0];$('p1').textContent=sc[1];$('tt').textContent=tt;$('roll').disabled=$('hold').disabled=cur!==0||over}
+function roll(){const v=1+Math.floor(Math.random()*6);$('d').textContent=F[v-1];if(v===1){tt=0;$('m').textContent=(cur?'CPU':'You')+' rolled a 1!';swap();return false}tt+=v;upd();return true}
+function hold(){sc[cur]+=tt;tt=0;if(sc[cur]>=50){over=true;upd();$('m').textContent=cur?'CPU wins 🤖':'🏆 You win!';$('new').style.display='';return}swap()}
+function swap(){cur=1-cur;tt=0;upd();if(cur===1){$('m').textContent+=' CPU is playing...';setTimeout(cpuStep,800)}else $('m').textContent+=' Your turn.'}
+function cpuStep(){if(over||cur!==1)return;const goal=sc[1]+tt>=50?0:sc[0]>=40?25:18;if(tt>=goal&&tt>0){$('m').textContent=`CPU holds ${tt}.`;hold();return}if(roll())setTimeout(cpuStep,650)}
+function start(){sc=[0,0];tt=0;cur=0;over=false;$('m').textContent='Your turn';$('new').style.display='none';upd()}
+$('roll').onclick=()=>{if(roll())$('m').textContent='Roll again or hold?'};$('hold').onclick=()=>{$('m').textContent=`You bank ${tt}.`;hold()};$('new').onclick=start;start();
+</script>
+
+</div></body></html>

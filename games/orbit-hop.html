@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbit Hop | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="orbit-hop"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Orbit Hop</h1>
+<div class="card"><div class="stats">Planets <b id="s">0</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="360" height="540"></canvas><div class="msg" id="m">You orbit a planet. Tap / Space to let go and fly straight. Get caught by the next planet's orbit!</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=360,H=540,COL=['#e67e22','#9b59b6','#1abc9c','#e74c3c','#3498db','#f1c40f'];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let ps,cur,a,dir,fly,sc,on=false,best=0,cam,camT,last,stars,trail;
+const orb=q=>q.r+26;
+function planet(y){const r=14+Math.random()*16;return{x:50+Math.random()*(W-100),y,r,c:COL[Math.floor(Math.random()*6)],m:sc>4&&Math.random()<.4?(Math.random()<.5?-1:1)*(.5+Math.random()):0}}
+function start(){sc=0;cam=camT=0;ps=[{x:W/2,y:H-110,r:26,c:COL[0],m:0}];for(let i=1;i<6;i++)ps.push(planet(ps[i-1].y-150-Math.random()*50));
+cur=0;a=0;dir=1;fly=null;trail=[];on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function release(){if(!on||fly)return;const q=ps[cur],R=orb(q);fly={x:q.x+Math.cos(a)*R,y:q.y+Math.sin(a)*R,vx:-Math.sin(a)*dir*5.5,vy:Math.cos(a)*dir*5.5,from:cur,t:0}}
+c.addEventListener('pointerdown',release);addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();release()}});
+function loop(t){if(!on)return;const dt=Math.min(40,t-last)/16;last=t;
+ps.forEach(q=>{if(q.m){q.x+=q.m*dt;if(q.x<q.r+30||q.x>W-q.r-30)q.m*=-1}});
+if(!fly){a+=dir*(.04+sc*.002)*dt}else{fly.x+=fly.vx*dt;fly.y+=fly.vy*dt;fly.t+=dt;trail.push([fly.x,fly.y]);if(trail.length>30)trail.shift();
+for(let i=0;i<ps.length;i++){if(i===fly.from)continue;const q=ps[i],dx=fly.x-q.x,dy=fly.y-q.y;if(Math.hypot(dx,dy)<orb(q)){cur=i;a=Math.atan2(dy,dx);dir=Math.sign(dx*fly.vy-dy*fly.vx)||1;
+if(i>fly.from){sc+=i-fly.from;$('s').textContent=sc}fly=null;trail=[];break}}
+if(fly){const sy=fly.y+cam;if(fly.x<-30||fly.x>W+30||sy>H+30||sy<-200||fly.t>220){on=false;if(sc>best){best=sc;$('b').textContent=sc}$('m').textContent=`Lost in space! ${sc} planets.`;$('go').disabled=false;$('go').textContent='Again'}}}
+if(cur>0){const drop=cur;ps.splice(0,drop);cur=0;while(ps.length<6)ps.push(planet(ps.at(-1).y-150-Math.random()*60))}
+camT=H-150-ps[cur].y;cam+=(camT-cam)*.08;
+x.clearRect(0,0,W,H);x.save();x.translate(0,cam);
+ps.forEach((q,i)=>{x.strokeStyle=css('--line');x.setLineDash([4,6]);x.beginPath();x.arc(q.x,q.y,orb(q),0,7);x.stroke();x.setLineDash([]);x.fillStyle=q.c;x.beginPath();x.arc(q.x,q.y,q.r,0,7);x.fill()});
+x.strokeStyle=css('--accent');x.globalAlpha=.5;x.beginPath();trail.forEach((p,i)=>i?x.lineTo(...p):x.moveTo(...p));x.stroke();x.globalAlpha=1;
+const q=ps[cur],px=fly?fly.x:q.x+Math.cos(a)*orb(q),py=fly?fly.y:q.y+Math.sin(a)*orb(q);x.fillStyle=css('--ink');x.beginPath();x.arc(px,py,6,0,7);x.fill();x.restore();
+if(on)requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

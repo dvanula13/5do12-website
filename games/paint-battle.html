@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paint Battle | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="paint-battle"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Paint Battle</h1>
+<div class="card"><div class="stats"><span style="color:#3b9ae1">You <b id="ps">0%</b></span> · Time <b id="t">45</b> · <span style="color:#e8564a">CPU <b id="cs">0%</b></span></div>
+<canvas id="c" width="360" height="360"></canvas><div class="msg" id="m">Paint more of the floor than the CPU. Steer with arrows / WASD, or hold the mouse/finger where to go. 💥 paints a big splash.</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),N=30,Z=12;
+let g,P,C,bombs,tl,on=false,keys={},tgt=null,last,acc;
+addEventListener('keydown',e=>keys[e.key]=1);addEventListener('keyup',e=>keys[e.key]=0);
+const pt=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*360/r.width,y:(e.clientY-r.top)*360/r.height}};
+c.addEventListener('pointerdown',e=>tgt=pt(e));c.addEventListener('pointermove',e=>{if(tgt)tgt=pt(e)});addEventListener('pointerup',()=>tgt=null);addEventListener('pointercancel',()=>tgt=null);
+function paint(b,v,rad=1){const cx=Math.floor(b.x/Z),cy=Math.floor(b.y/Z);for(let a=-rad;a<=rad;a++)for(let d=-rad;d<=rad;d++){const X=cx+a,Y=cy+d;if(X>=0&&Y>=0&&X<N&&Y<N&&a*a+d*d<=rad*rad+1)g[Y*N+X]=v}}
+function start(){g=new Uint8Array(N*N);P={x:60,y:180};C={x:300,y:180,tx:300,ty:180};bombs=[];tl=45;acc=0;on=true;$('go').disabled=true;$('m').textContent='';last=performance.now();requestAnimationFrame(loop)}
+function moveTo(b,dx,dy,sp,dt){const l=Math.hypot(dx,dy);if(l>2){b.x+=dx/l*sp*dt;b.y+=dy/l*sp*dt}b.x=Math.max(6,Math.min(354,b.x));b.y=Math.max(6,Math.min(354,b.y))}
+function loop(t){if(!on)return;const dt=Math.min(40,t-last)/16;last=t;acc+=dt;if(acc>=60){acc-=60;tl--;$('t').textContent=tl}
+let dx=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0),dy=(keys.ArrowDown||keys.s?1:0)-(keys.ArrowUp||keys.w?1:0);if(tgt){dx=tgt.x-P.x;dy=tgt.y-P.y}moveTo(P,dx,dy,2.6,dt);
+if(Math.hypot(C.tx-C.x,C.ty-C.y)<8||Math.random()<.01){let best=null,bd=1e9;for(let k=0;k<40;k++){const i=Math.floor(Math.random()*N*N);if(g[i]!==2){const X=(i%N)*Z+6,Y=Math.floor(i/N)*Z+6,d=Math.hypot(X-C.x,Y-C.y)-(g[i]===1?60:0);if(d<bd){bd=d;best=[X,Y]}}}
+const bb=bombs.find(b=>Math.hypot(b.x-C.x,b.y-C.y)<120);if(bb)best=[bb.x,bb.y];if(best){C.tx=best[0];C.ty=best[1]}}
+moveTo(C,C.tx-C.x,C.ty-C.y,2.4,dt);paint(P,1);paint(C,2);
+if(Math.random()<.006*dt&&bombs.length<3)bombs.push({x:30+Math.random()*300,y:30+Math.random()*300});
+bombs=bombs.filter(b=>{for(const[q,v]of[[P,1],[C,2]])if(Math.hypot(q.x-b.x,q.y-b.y)<16){paint(b,v,4);return false}return true});
+x.clearRect(0,0,360,360);let pc=0,cc=0;for(let i=0;i<N*N;i++){if(g[i]){x.fillStyle=g[i]===1?'#3b9ae1':'#e8564a';x.fillRect((i%N)*Z,Math.floor(i/N)*Z,Z,Z);g[i]===1?pc++:cc++}}
+x.font='20px serif';x.textAlign='center';x.textBaseline='middle';bombs.forEach(b=>x.fillText('💥',b.x,b.y));
+for(const[q,col]of[[P,'#1d5f9e'],[C,'#a3302a']]){x.fillStyle=col;x.beginPath();x.arc(q.x,q.y,9,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=2;x.stroke()}
+const pp=Math.round(pc/N/N*100),cp=Math.round(cc/N/N*100);$('ps').textContent=pp+'%';$('cs').textContent=cp+'%';
+if(tl<=0){on=false;$('m').textContent=pp>cp?`🎨 You win ${pp}% to ${cp}%!`:pp<cp?`CPU wins ${cp}% to ${pp}%`:'Tie!';$('go').disabled=false;$('go').textContent='Again';return}requestAnimationFrame(loop)}
+$('go').onclick=start;
+</script>
+
+</div></body></html>

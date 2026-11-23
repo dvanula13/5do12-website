@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anagram Scramble | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="anagram"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Anagram Scramble</h1>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Time <b id="t">60</b> · Best <b id="b">0</b></div>
+<div class="big" id="w" style="letter-spacing:8px;font-family:monospace">?????</div><div class="row"><input type="text" id="a" placeholder="unscramble" autocomplete="off" autocapitalize="off"></div>
+<div class="msg" id="m">Unscramble as many words as you can.</div><div class="row"><button id="go">Start</button><button id="sk" class="alt" disabled>Skip</button></div></div>
+<script>
+const W='apple tiger house plant river cloud chair bread light stone music beach dream heart smile ocean green happy table money water friend summer pencil yellow orange garden flower animal planet rabbit kitten basket candle silver winter spring castle hammer button ladder'.split(' ');
+const $=id=>document.getElementById(id);let w,sc,tl,iv,on=false,best=0;
+function next(){w=W[Math.floor(Math.random()*W.length)];let s;do s=[...w].sort(()=>Math.random()-.5).join('');while(s===w);$('w').textContent=s.toUpperCase();$('a').value='';$('a').focus()}
+$('a').oninput=()=>{if(on&&$('a').value.trim().toLowerCase()===w){sc++;$('s').textContent=sc;$('m').textContent='✅ '+w;next()}};
+$('sk').onclick=()=>{$('m').textContent='Skipped: '+w;next()};
+$('go').onclick=()=>{sc=0;tl=60;on=true;$('s').textContent=0;$('t').textContent=60;$('m').textContent='';$('go').disabled=true;$('sk').disabled=false;next();
+iv=setInterval(()=>{tl--;$('t').textContent=tl;if(tl<=0){clearInterval(iv);on=false;$('sk').disabled=true;$('go').disabled=false;$('m').textContent=`Time! The last word was "${w}". Score ${sc}`;if(sc>best){best=sc;$('b').textContent=sc}}},1000)};
+</script>
+
+</div></body></html>

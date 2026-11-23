@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rule Sorter | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="rule-sorter"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Rule Sorter</h1>
+<style>#item{font-size:80px;height:110px;line-height:110px;margin:6px 0}.bin{flex:1;padding:14px 6px;font-size:18px;border-radius:12px}#rule{font-weight:800;letter-spacing:1px;color:var(--accent2)}#tb{height:6px;background:var(--accent);border-radius:3px;margin:6px 0}</style>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Lives <b id="l">3</b> · Best <b id="b">0</b></div>
+<div>Sort by <span id="rule">—</span></div><div id="tb"></div><div id="item">❓</div>
+<div class="row"><button class="bin" id="L">◀</button><button class="bin" id="R">▶</button></div><div class="msg" id="m">The rule changes every few items! ← → keys or tap a bin.</div><button id="go">Start</button></div>
+<script>
+const $=id=>document.getElementById(id),SH=[['●','circle'],['▲','triangle'],['■','square']],CO=[['#e74c3c','red'],['#3498db','blue'],['#2ecc71','green']];
+let rule,bins,it,sc,lv,on=false,best=0,tmr,left,T;
+function newRule(){rule=Math.random()<.5?'shape':'color';const pool=rule==='shape'?SH.map(s=>s[1]):CO.map(c=>c[1]);const a=[...pool].sort(()=>Math.random()-.5);bins=[a[0],a[1]];$('rule').textContent=rule.toUpperCase();
+$('L').textContent='◀ '+bins[0];$('R').textContent=bins[1]+' ▶';$('m').textContent='🔄 New rule: '+rule}
+function next(){if(sc&&sc%5===0)newRule();const want=Math.floor(Math.random()*2),s=SH[Math.floor(Math.random()*3)],c=CO[Math.floor(Math.random()*3)];
+it=rule==='shape'?{s:SH.find(q=>q[1]===bins[want]),c}:{s,c:CO.find(q=>q[1]===bins[want])};it.ans=want;$('item').textContent=it.s[0];$('item').style.color=it.c[0];
+T=Math.max(900,2600-sc*60);left=T;clearInterval(tmr);tmr=setInterval(()=>{left-=50;$('tb').style.width=Math.max(0,left/T*100)+'%';if(left<=0)answer(-1)},50)}
+function answer(k){if(!on)return;if(k===it.ans){sc++;$('s').textContent=sc;$('m').textContent='✅'}else{lv--;$('l').textContent=lv;$('m').textContent=k<0?'⏰ Too slow!':'❌ Wrong bin!'}
+if(lv<=0){on=false;clearInterval(tmr);if(sc>best){best=sc;$('b').textContent=sc}$('m').textContent=`Game over! Score ${sc}`;$('go').disabled=false;return}next()}
+$('L').onclick=()=>answer(0);$('R').onclick=()=>answer(1);addEventListener('keydown',e=>{if(e.key==='ArrowLeft')answer(0);if(e.key==='ArrowRight')answer(1)});
+$('go').onclick=()=>{sc=0;lv=3;on=true;$('s').textContent=0;$('l').textContent=3;$('go').disabled=true;newRule();next()};
+</script>
+
+</div></body></html>

@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coin Flip | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="coin-flip"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Coin Flip</h1>
+<style>#c{font-size:30px;font-weight:800;width:140px;height:140px;border-radius:50%;margin:10px auto;display:flex;align-items:center;justify-content:center;background:#f1c40f;color:#7a5a00;box-shadow:inset 0 -6px 0 #d4a800}#c.spin{animation:sp .7s ease-out}@keyframes sp{0%{transform:rotateY(0)}100%{transform:rotateY(1440deg)}}</style>
+<div class="card"><div class="stats">Streak <b id="s">0</b> · Best <b id="b">0</b></div><div id="c">?</div>
+<div class="msg" id="m">Call it: heads or tails?</div><div class="row"><button data-g="H">Heads</button><button data-g="T">Tails</button></div></div>
+<script>
+const $=id=>document.getElementById(id);let s=0,best=0,busy=false;
+document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{if(busy)return;busy=true;const c=$('c');c.classList.remove('spin');void c.offsetWidth;c.classList.add('spin');c.textContent='';
+setTimeout(()=>{const r=Math.random()<.5?'H':'T';c.textContent=r==='H'?'HEADS':'TAILS';const ok=r===b.dataset.g;s=ok?s+1:0;if(s>best)best=s;
+$('s').textContent=s;$('b').textContent=best;$('m').textContent=ok?'✅ Correct!':'❌ Nope — streak reset';busy=false},700)});
+</script>
+
+</div></body></html>

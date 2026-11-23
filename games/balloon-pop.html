@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Balloon Pop | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="balloon-pop"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Balloon Pop</h1>
+<div class="card"><div class="stats">Popped <b id="s">0</b> · Lives <b id="l">5</b> · Best <b id="b">0</b></div>
+<canvas id="c" width="400" height="480"></canvas><div class="msg" id="m">Pop balloons before they float away. Don't pop 💣!</div><button id="go">Start</button></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),COL=['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22'];
+let bs,sc,lv,on=false,best=0,last,sp;
+c.addEventListener('pointerdown',e=>{if(!on)return;const r=c.getBoundingClientRect(),px=(e.clientX-r.left)*400/r.width,py=(e.clientY-r.top)*480/r.height;
+for(let i=bs.length-1;i>=0;i--){const b=bs[i];if(Math.hypot(px-b.x,py-b.y)<b.r+4){bs.splice(i,1);if(b.bomb)lv-=2;else sc++;upd();break}}});
+function upd(){$('s').textContent=sc;$('l').textContent=Math.max(0,lv);if(sc>best){best=sc;$('b').textContent=sc}}
+function loop(t){if(!on)return;const dt=Math.min(50,t-last)/16;last=t;sp-=dt;
+if(sp<=0){bs.push({x:30+Math.random()*340,y:510,r:20+Math.random()*12,v:1+Math.random()+sc*.03,w:Math.random()*6,c:COL[Math.floor(Math.random()*6)],bomb:Math.random()<.12});sp=Math.max(14,45-sc*.6)}
+x.clearRect(0,0,400,480);
+bs=bs.filter(b=>{b.y-=b.v*dt;b.w+=.05*dt;const bx=b.x+Math.sin(b.w)*6;b.x+=Math.sin(b.w)*.3;
+x.strokeStyle='#888';x.beginPath();x.moveTo(bx,b.y+b.r);x.lineTo(bx,b.y+b.r+18);x.stroke();
+if(b.bomb){x.font=b.r*2+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText('💣',bx,b.y)}else{x.fillStyle=b.c;x.beginPath();x.ellipse(bx,b.y,b.r*.85,b.r,0,0,7);x.fill();x.fillStyle='#fff6';x.beginPath();x.arc(bx-b.r*.3,b.y-b.r*.35,b.r*.2,0,7);x.fill()}
+if(b.y<-50){if(!b.bomb){lv--;upd()}return false}return true});
+if(lv<=0){on=false;$('m').textContent=`Game over! You popped ${sc}.`;$('go').disabled=false;return}requestAnimationFrame(loop)}
+$('go').onclick=()=>{bs=[];sc=0;lv=5;sp=0;on=true;upd();$('m').textContent='';$('go').disabled=true;last=performance.now();requestAnimationFrame(loop)};
+</script>
+
+</div></body></html>

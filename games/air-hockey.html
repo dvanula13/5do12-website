@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Air Hockey | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="air-hockey"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Air Hockey</h1>
+<div class="card"><div class="stats">You <b id="ps">0</b> · CPU <b id="cs">0</b> · First to 7</div>
+<canvas id="c" width="300" height="480" style="cursor:none"></canvas><div class="msg" id="m">Move your paddle with the mouse or finger.</div></div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),$=id=>document.getElementById(id),W=300,H=480,PR=24,BR=14,GL=90,GR=210;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let pl={x:150,y:420,vx:0,vy:0},cp={x:150,y:60,vx:0,vy:0},pk,tx=150,ty=420,sc=[0,0],pause=0,over=false,last=performance.now();
+function serve(toward){pk={x:150,y:240,vx:(Math.random()-.5)*2,vy:toward*1.5}}serve(1);
+c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();tx=(e.clientX-r.left)*W/r.width;ty=(e.clientY-r.top)*H/r.height});
+c.addEventListener('pointerdown',e=>{if(over){sc=[0,0];over=false;upd();serve(1);$('m').textContent=''}const r=c.getBoundingClientRect();tx=(e.clientX-r.left)*W/r.width;ty=(e.clientY-r.top)*H/r.height});
+c.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+function upd(){$('ps').textContent=sc[0];$('cs').textContent=sc[1]}
+function moveP(p,gx,gy,max,minY,maxY){gx=Math.max(PR,Math.min(W-PR,gx));gy=Math.max(minY,Math.min(maxY,gy));let dx=gx-p.x,dy=gy-p.y;const d=Math.hypot(dx,dy);if(d>max){dx*=max/d;dy*=max/d}p.vx=dx;p.vy=dy;p.x+=dx;p.y+=dy}
+function hit(p){const dx=pk.x-p.x,dy=pk.y-p.y,d=Math.hypot(dx,dy);if(d<PR+BR&&d>0){const nx=dx/d,ny=dy/d;pk.x=p.x+nx*(PR+BR);pk.y=p.y+ny*(PR+BR);
+const rv=(pk.vx-p.vx)*nx+(pk.vy-p.vy)*ny;if(rv<0){pk.vx-=1.9*rv*nx;pk.vy-=1.9*rv*ny}const s=Math.hypot(pk.vx,pk.vy);if(s>13){pk.vx*=13/s;pk.vy*=13/s}}}
+function step(){moveP(pl,tx,ty,18,H/2+PR,H-PR);
+let gx=150,gy=60;if(pk.y<H/2+40){gx=pk.x;gy=pk.y-10;if(pk.vy>0&&pk.y>cp.y)gy=pk.y-20}else gx=150+(pk.x-150)*.5;
+const lvl=Math.min(sc[0]+sc[1],8);moveP(cp,gx,gy,3.2+lvl*.25,PR,H/2-PR);
+for(let s=0;s<2;s++){pk.x+=pk.vx/2;pk.y+=pk.vy/2;hit(pl);hit(cp);
+if(pk.x<BR){pk.x=BR;pk.vx=Math.abs(pk.vx)}if(pk.x>W-BR){pk.x=W-BR;pk.vx=-Math.abs(pk.vx)}
+const inGoal=pk.x>GL&&pk.x<GR;
+if(pk.y<BR&&!inGoal){pk.y=BR;pk.vy=Math.abs(pk.vy)}if(pk.y>H-BR&&!inGoal){pk.y=H-BR;pk.vy=-Math.abs(pk.vy)}
+if(pk.y<-BR){sc[0]++;goal(-1);return}if(pk.y>H+BR){sc[1]++;goal(1);return}}
+pk.vx*=.996;pk.vy*=.996}
+function goal(w){upd();if(sc[0]>=7||sc[1]>=7){over=true;$('m').textContent=(sc[0]>=7?'🏆 You win!':'CPU wins.')+' Tap to play again.';pk={x:-99,y:-99,vx:0,vy:0};return}
+$('m').textContent=w<0?'GOAL! 🎉':'CPU scores';pause=50;serve(w<0?-1:1)}
+function draw(){x.clearRect(0,0,W,H);x.strokeStyle=css('--line');x.lineWidth=3;x.beginPath();x.moveTo(0,H/2);x.lineTo(W,H/2);x.stroke();x.beginPath();x.arc(150,240,50,0,7);x.stroke();
+x.fillStyle=css('--accent2');x.fillRect(GL,0,GR-GL,5);x.fillStyle=css('--accent');x.fillRect(GL,H-5,GR-GL,5);
+const disc=(p,col)=>{x.fillStyle=col;x.beginPath();x.arc(p.x,p.y,PR,0,7);x.fill();x.fillStyle='#fff5';x.beginPath();x.arc(p.x,p.y,PR*.45,0,7);x.fill()};
+disc(pl,css('--accent'));disc(cp,css('--accent2'));x.fillStyle=css('--ink');x.beginPath();x.arc(pk.x,pk.y,BR,0,7);x.fill()}
+function loop(t){if(pause>0)pause--;else if(!over)step();else moveP(pl,tx,ty,18,H/2+PR,H-PR);draw();requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+</script>
+
+</div></body></html>

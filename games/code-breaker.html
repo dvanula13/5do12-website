@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Code Breaker | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="code-breaker"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Code Breaker</h1>
+<style>.gr{display:flex;align-items:center;justify-content:center;gap:6px;margin:4px 0}.peg{width:30px;height:30px;border-radius:50%;background:var(--line);border:2px solid var(--card)}.fb{display:grid;grid-template-columns:repeat(2,10px);gap:3px;margin-left:8px}.fb i{width:10px;height:10px;border-radius:50%;background:var(--line)}.fb i.b{background:var(--ink)}.fb i.w{background:var(--card);border:2px solid var(--ink)}
+.pal button{width:40px;height:40px;border-radius:50%;padding:0}.gr.cur .peg{border-color:var(--accent)}</style>
+<div class="card"><p class="muted">Crack the secret 4-color code in 10 tries. ● = right color, right spot. ○ = right color, wrong spot. Colors can repeat.</p>
+<div id="rows"></div><div class="row pal" id="pal"></div><div class="row"><button class="alt" id="del">⌫</button><button id="ok">Check</button><button class="alt" id="r">New code</button></div><div class="msg" id="m"></div></div>
+<script>
+const C=['#e74c3c','#f1c40f','#2ecc71','#3498db','#9b59b6','#e67e22'],$=id=>document.getElementById(id);let code,rows,cur,done;
+function reset(){code=[...Array(4)].map(()=>Math.floor(Math.random()*6));rows=[];cur=[];done=false;$('m').textContent='';draw()}
+function score(g){let b=0,w=0;const cc=[0,0,0,0,0,0],gc=[0,0,0,0,0,0];g.forEach((v,i)=>{if(v===code[i])b++;else{cc[code[i]]++;gc[v]++}});for(let k=0;k<6;k++)w+=Math.min(cc[k],gc[k]);return[b,w]}
+function draw(){let h='';const all=[...rows,...(done?[]:[{g:cur,f:null}])];for(let r=0;r<10;r++){const row=all[r];h+=`<div class="gr ${row&&!row.f?'cur':''}">`;
+for(let k=0;k<4;k++)h+=`<div class="peg" style="${row&&row.g[k]!==undefined?'background:'+C[row.g[k]]:''}"></div>`;h+='<div class="fb">';const f=row&&row.f;
+for(let k=0;k<4;k++)h+=`<i class="${f&&k<f[0]?'b':f&&k<f[0]+f[1]?'w':''}"></i>`;h+='</div></div>'}if(done)h+=`<div class="gr"><span class="muted">Code:</span>${code.map(v=>`<div class="peg" style="background:${C[v]}"></div>`).join('')}</div>`;$('rows').innerHTML=h}
+C.forEach((c,i)=>{const b=document.createElement('button');b.style.background=c;b.onclick=()=>{if(!done&&cur.length<4){cur.push(i);draw()}};$('pal').appendChild(b)});
+$('del').onclick=()=>{cur.pop();draw()};$('r').onclick=reset;
+$('ok').onclick=()=>{if(done||cur.length<4)return;const f=score(cur);rows.push({g:cur,f});cur=[];if(f[0]===4){done=true;$('m').textContent=`🔓 Cracked in ${rows.length} tries!`}else if(rows.length>=10){done=true;$('m').textContent='Out of tries! The code is shown below.'}draw()};
+reset();
+</script>
+
+</div></body></html>

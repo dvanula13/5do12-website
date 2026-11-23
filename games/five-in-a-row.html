@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Five in a Row | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="five-in-a-row"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Five in a Row</h1>
+<style>#g{display:inline-grid;grid-template-columns:repeat(13,26px);background:#deb06a;padding:6px;border-radius:6px}.q{width:26px;height:26px;position:relative;cursor:pointer}
+.q::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:1px;background:#7a5a30}.q::after{content:'';position:absolute;top:12px;left:0;right:0;height:1px;background:#7a5a30}
+.st{position:absolute;inset:2px;border-radius:50%;z-index:1}.st.k{background:radial-gradient(circle at 35% 35%,#555,#000)}.st.w{background:radial-gradient(circle at 35% 35%,#fff,#ccc)}.st.last{box-shadow:0 0 0 2px #e74c3c}.st.win{box-shadow:0 0 0 3px #2ecc71}</style>
+<div class="card"><p class="muted">Get five in a row — across, down or diagonal — before the CPU.</p><div id="g"></div><div class="msg" id="m">You are black. Your move.</div><button class="alt" id="r">New game</button></div>
+<script>
+let cpuTimer;
+const N=13,$=id=>document.getElementById(id),D=[[1,0],[0,1],[1,1],[1,-1]];let b,over,lastM,cells=[];
+for(let i=0;i<N*N;i++){const d=document.createElement('div');d.className='q';d.onclick=()=>play(i);$('g').appendChild(d);cells.push(d)}
+const at=(r,c)=>r>=0&&c>=0&&r<N&&c<N?b[r*N+c]:'x';
+function line(i,p){const r=Math.floor(i/N),c=i%N;for(const[dr,dc]of D){const run=[i];for(const s of[1,-1]){let k=1;while(at(r+dr*k*s,c+dc*k*s)===p){run.push((r+dr*k*s)*N+c+dc*k*s);k++}}if(run.length>=5)return run}return null}
+function evalPt(i,p){const r=Math.floor(i/N),c=i%N;let sc=0;for(const[dr,dc]of D){let cnt=1,open=0;for(const s of[1,-1]){let k=1;while(at(r+dr*k*s,c+dc*k*s)===p){cnt++;k++}if(at(r+dr*k*s,c+dc*k*s)===null)open++}
+sc+=cnt>=5?1e6:cnt===4?(open===2?5e4:open?6e3:0):cnt===3?(open===2?3e3:open?300:0):cnt===2?(open===2?100:open?20:0):open*2}return sc}
+function cpu(){let best=-1,bs=-1;for(let i=0;i<N*N;i++){if(b[i])continue;const r=Math.floor(i/N),c=i%N;let near=false;for(let a=-2;a<=2&&!near;a++)for(let d=-2;d<=2;d++){const v=at(r+a,c+d);if(v&&v!=='x'){near=true;break}}if(!near)continue;
+const s=evalPt(i,'w')*1.1+evalPt(i,'k')+Math.random();if(s>bs){bs=s;best=i}}return best<0?Math.floor(N*N/2):best}
+function place(i,p){b[i]=p;lastM=i;const w=line(i,p);draw(w);if(w){over=true;$('m').textContent=p==='k'?'🎉 Five in a row — you win!':'CPU got five. You lose!';return true}if(b.every(v=>v)){over=true;$('m').textContent='Board full — draw';return true}return false}
+function play(i){if(over||b[i])return;if(place(i,"k"))return;$("m").textContent="CPU thinking...";over=true;cpuTimer=setTimeout(()=>{over=false;if(!place(cpu(),"w"))$("m").textContent="Your move."},250)}
+function draw(win){cells.forEach((d,i)=>{d.innerHTML=b[i]?`<div class="st ${b[i]} ${i===lastM?'last':''} ${win&&win.includes(i)?'win':''}"></div>`:''})}
+function reset(){clearTimeout(cpuTimer);b=Array(N*N).fill(null);over=false;lastM=-1;$('m').textContent='You are black. Your move.';draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

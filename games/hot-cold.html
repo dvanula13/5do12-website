@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hot or Cold | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="hot-cold"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Hot or Cold</h1>
+<style>.h{width:32px;height:32px;margin:0;padding:0;border-radius:6px;background:var(--line);color:#fff;font-size:12px;font-weight:700}</style>
+<div class="card"><p class="muted">A treasure is hidden. Each click tells you how close you are (red = hot, blue = cold).</p>
+<div class="stats">Tries <b id="t">0</b> · Best <b id="b">–</b></div><div class="grid" id="g"></div>
+<div class="msg" id="m"></div><button class="alt" id="r">New hunt</button></div>
+<script>
+const $=id=>document.getElementById(id);let tx,ty,t,done,best=null;
+function reset(){tx=Math.floor(Math.random()*10);ty=Math.floor(Math.random()*10);t=0;done=false;$('t').textContent=0;$('m').textContent='';$('g').innerHTML='';
+for(let y=0;y<10;y++)for(let x=0;x<10;x++){const b=document.createElement('button');b.className='h';b.onclick=()=>{if(done||b.textContent)return;t++;$('t').textContent=t;
+const d=Math.hypot(x-tx,y-ty);if(d===0){b.textContent='💎';b.style.background='var(--ok)';done=true;$('m').textContent=`🎉 Found in ${t} tries!`;if(best===null||t<best){best=t;$('b').textContent=t}return}
+b.textContent=Math.round(d);b.style.background=`hsl(${Math.min(1,d/9)*220},70%,50%)`;$('m').textContent=d<2?'🔥 Burning hot!':d<4?'Warm':d<7?'Cool':'🥶 Freezing'};$('g').appendChild(b)}}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

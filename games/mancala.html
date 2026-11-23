@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mancala | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="mancala"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Mancala</h1>
+<style>#bd{display:inline-grid;grid-template-columns:60px repeat(6,52px) 60px;grid-template-rows:60px 60px;gap:6px;background:#8a5a32;padding:10px;border-radius:30px}
+.pit{border-radius:50%;background:#5e3b1f;color:#fff;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;border:0;margin:0;padding:0;width:52px;height:52px;align-self:center}
+.pit.me:not(:disabled){box-shadow:0 0 0 3px #f1c40f;cursor:pointer}.st{grid-row:1/3;border-radius:28px;background:#5e3b1f;color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center}</style>
+<div class="card"><p class="muted">Pick one of your pits (bottom row). Seeds are sown counter-clockwise. End in your store (right) = extra turn. End in an empty pit of yours = capture the pit opposite.</p>
+<div id="bd"></div><div class="msg" id="m">Your turn</div><button class="alt" id="r">New game</button></div>
+<script>
+let cpuTimer;
+const $=id=>document.getElementById(id);let s,turn,busy;
+function sow(S,i,who){S=[...S];let n=S[i];S[i]=0;let j=i;while(n){j=(j+1)%14;if((who===0&&j===13)||(who===1&&j===6))continue;S[j]++;n--}
+const own=who===0?j>=0&&j<=5:j>=7&&j<=12,store=who===0?6:13;if(own&&S[j]===1&&S[12-j]>0){S[store]+=S[12-j]+1;S[j]=0;S[12-j]=0}
+let done=false;const a=S.slice(0,6).reduce((x,y)=>x+y),b=S.slice(7,13).reduce((x,y)=>x+y);if(!a||!b){S[6]+=a;S[13]+=b;for(let k=0;k<14;k++)if(k!==6&&k!==13)S[k]=0;done=true}return{S,extra:j===store&&!done,done}}
+const opts=(S,who)=>(who===0?[0,1,2,3,4,5]:[7,8,9,10,11,12]).filter(i=>S[i]>0);
+function mm(S,who,d){if(d===0||!opts(S,0).length&&!opts(S,1).length)return S[13]-S[6];const o=opts(S,who);if(!o.length)return S[13]-S[6];let best=who===1?-1e9:1e9;
+for(const i of o){const r=sow(S,i,who);const v=r.done?(r.S[13]-r.S[6])*10:mm(r.S,r.extra?who:1-who,d-1);best=who===1?Math.max(best,v):Math.min(best,v)}return best}
+function draw(){const bd=$('bd');bd.innerHTML='';const st=(k,col)=>{const d=document.createElement('div');d.className='st';d.style.gridColumn=col;d.textContent=s[k];bd.appendChild(d)};st(13,1);
+for(let k=12;k>=7;k--){const d=document.createElement('button');d.className='pit';d.disabled=true;d.textContent=s[k];d.style.gridRow=1;bd.appendChild(d)}st(6,8);
+for(let k=0;k<6;k++){const d=document.createElement('button');d.className='pit me';d.textContent=s[k];d.style.gridRow=2;d.style.gridColumn=k+2;d.disabled=turn!==0||busy||!s[k];d.onclick=()=>play(k);bd.appendChild(d)}}
+function after(r,who){s=r.S;if(r.done){draw();busy=true;$('m').textContent=s[6]>s[13]?`🎉 You win ${s[6]}–${s[13]}!`:s[6]<s[13]?`CPU wins ${s[13]}–${s[6]}`:'Draw!';return}
+turn=r.extra?who:1-who;if(turn===1){busy=true;$('m').textContent=r.extra&&who===1?'CPU goes again...':'CPU thinking...';draw();cpuTimer=setTimeout(cpu,700)}else{busy=false;$('m').textContent=r.extra?'Extra turn! Go again.':'Your turn';draw()}}
+function play(k){if(turn!==0||busy||!s[k])return;after(sow(s,k,0),0)}
+function cpu(){let best=null,bv=-1e9;for(const i of opts(s,1)){const r=sow(s,i,1);const v=(r.done?(r.S[13]-r.S[6])*10:mm(r.S,r.extra?1:0,5))+Math.random()*.5;if(v>bv){bv=v;best=i}}after(sow(s,best,1),1)}
+function reset(){clearTimeout(cpuTimer);s=[4,4,4,4,4,4,0,4,4,4,4,4,4,0];turn=0;busy=false;$('m').textContent='Your turn';draw()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>

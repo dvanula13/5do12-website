@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golf Solitaire | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="golf-solitaire"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Golf Solitaire</h1>
+<style>.cols{display:flex;gap:6px;justify-content:center}.col{display:flex;flex-direction:column;width:48px}.cd{width:48px;height:68px;border-radius:7px;background:#fff;color:#222;border:1px solid #bbb;font-weight:700;font-size:16px;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;margin:0 0 -48px 0;cursor:default;box-shadow:0 1px 2px #0003}
+.cd.r{color:#d0312d}.cd.top{cursor:pointer}.cd.ok{box-shadow:0 0 0 3px #2ecc71}.cd.back{background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 6px,#fff3 6px,#fff3 12px)}.bot{display:flex;gap:24px;justify-content:center;align-items:center;margin-top:70px}.bot .cd{margin:0;font-size:22px}</style>
+<div class="card"><p class="muted">Move a top card to the pile if it's one rank higher or lower (no wrapping K↔A). Clear all 35 cards!</p>
+<div class="cols" id="cols"></div><div class="bot"><div><div class="cd back" id="stock"></div><div class="muted" style="font-size:13px"><b id="sl"></b> left</div></div><div id="pile"></div></div>
+<div class="msg" id="m"></div><div class="stats">Cards left <b id="cl">35</b> · Best <b id="b">–</b></div><button class="alt" id="r">New deal</button></div>
+<script>
+const $=id=>document.getElementById(id),R=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];let cols,stock,pile,best=null;
+const face=c=>`${R[c.r]}${c.s}`,red=c=>'♥♦'.includes(c.s),ok=c=>Math.abs(c.r-pile.at(-1).r)===1;
+function deal(){const d=[];for(const s of'♠♥♦♣')for(let r=0;r<13;r++)d.push({r,s});d.sort(()=>Math.random()-.5);cols=[...Array(7)].map(()=>d.splice(0,5));pile=[d.pop()];stock=d;draw()}
+function draw(){$('cols').innerHTML='';cols.forEach((col,ci)=>{const el=document.createElement('div');el.className='col';col.forEach((c,k)=>{const b=document.createElement('div');const top=k===col.length-1;
+b.className='cd'+(red(c)?' r':'')+(top?' top':'')+(top&&ok(c)?' ok':'');b.textContent=face(c);if(top)b.onclick=()=>move(ci);el.appendChild(b)});$('cols').appendChild(el)});
+const p=pile.at(-1);$('pile').innerHTML=`<div class="cd${red(p)?' r':''}">${face(p)}</div>`;$('stock').style.visibility=stock.length?'visible':'hidden';$('sl').textContent=stock.length;
+const left=cols.reduce((a,c)=>a+c.length,0);$('cl').textContent=left;const canMove=cols.some(c=>c.length&&ok(c.at(-1)));
+if(!left){$('m').textContent='🏆 Perfect clear!';fin(0)}else if(!stock.length&&!canMove){$('m').textContent=`No more moves. ${left} cards left.`;fin(left)}else $('m').textContent=''}
+function fin(n){if(best===null||n<best){best=n;$('b').textContent=n}}
+function move(ci){const c=cols[ci].at(-1);if(!c||!ok(c))return;pile.push(cols[ci].pop());draw()}
+$('stock').onclick=()=>{if(stock.length){pile.push(stock.pop());draw()}};$('r').onclick=deal;deal();
+</script>
+
+</div></body></html>

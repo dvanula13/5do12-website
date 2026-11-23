@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sudoku | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="sudoku"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Sudoku</h1>
+<style>#g{display:inline-grid;grid-template-columns:repeat(9,36px);border:2px solid var(--ink)}.s{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:19px;border:1px solid var(--line);cursor:pointer;user-select:none}
+.s.giv{font-weight:800}.s.usr{color:var(--accent)}.s.bad{color:var(--accent2);background:#e8564a22}.s.sel{background:#3b6fe055}.s.same{background:#3b6fe022}.s.br{border-right:2px solid var(--ink)}.s.bb{border-bottom:2px solid var(--ink)}.pad button{width:42px;padding:10px 0}</style>
+<div class="card"><div class="row"><button class="alt" data-l="36">Easy</button><button class="alt" data-l="46">Medium</button><button class="alt" data-l="53">Hard</button></div>
+<div class="stats">Mistakes <b id="mi">0</b> · Time <b id="t">0:00</b></div><div id="g"></div><div class="row pad" id="pad"></div><div class="msg" id="m">Pick a cell, then a number (or type 1–9).</div></div>
+<script>
+const $=id=>document.getElementById(id);let sol,puz,cur,sel=-1,mi,t0,iv,done,cells=[];
+const peers=i=>{const r=Math.floor(i/9),c=i%9,o=new Set;for(let k=0;k<9;k++){o.add(r*9+k);o.add(k*9+c)}const br=r-r%3,bc=c-c%3;for(let a=0;a<3;a++)for(let b=0;b<3;b++)o.add((br+a)*9+bc+b);o.delete(i);return[...o]};const PE=[...Array(81)].map((_,i)=>peers(i));
+const okAt=(g,i,v)=>PE[i].every(p=>g[p]!==v);
+function fill(g){const i=g.indexOf(0);if(i<0)return true;for(const v of[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-.5))if(okAt(g,i,v)){g[i]=v;if(fill(g))return true;g[i]=0}return false}
+function count(g,lim){let best=-1,bn=10;for(let i=0;i<81;i++)if(!g[i]){let n=0;for(let v=1;v<=9;v++)if(okAt(g,i,v))n++;if(n<bn){bn=n;best=i}if(!n)return 0}if(best<0)return 1;let tot=0;
+for(let v=1;v<=9&&tot<lim;v++)if(okAt(g,best,v)){g[best]=v;tot+=count(g,lim-tot);g[best]=0}return tot}
+function gen(holes){sol=Array(81).fill(0);fill(sol);puz=[...sol];let removed=0;for(const i of[...Array(81).keys()].sort(()=>Math.random()-.5)){if(removed>=holes)break;const v=puz[i];puz[i]=0;if(count([...puz],2)!==1)puz[i]=v;else removed++}
+cur=[...puz];mi=0;done=false;sel=-1;$('mi').textContent=0;$('m').textContent='Pick a cell, then a number (or type 1–9).';clearInterval(iv);t0=Date.now();iv=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);$('t').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000);draw()}
+function draw(){cells.forEach((d,i)=>{const v=cur[i];d.textContent=v||'';d.className='s'+((i%9===2||i%9===5)?' br':'')+((Math.floor(i/9)===2||Math.floor(i/9)===5)?' bb':'')+(puz[i]?' giv':v?(v===sol[i]?' usr':' bad'):'')+(i===sel?' sel':sel>=0&&v&&v===cur[sel]?' same':'')})}
+function put(v){if(done||sel<0||puz[sel])return;cur[sel]=v;if(v&&v!==sol[sel]){mi++;$('mi').textContent=mi}draw();if(cur.every((x,i)=>x===sol[i])){done=true;clearInterval(iv);$('m').textContent=`🎉 Solved in ${$('t').textContent} with ${mi} mistakes!`}}
+for(let i=0;i<81;i++){const d=document.createElement('div');d.onclick=()=>{sel=i;draw()};$('g').appendChild(d);cells.push(d)}
+for(let v=1;v<=9;v++){const b=document.createElement('button');b.textContent=v;b.onclick=()=>put(v);$('pad').appendChild(b)}const e=document.createElement('button');e.className='alt';e.textContent='⌫';e.onclick=()=>put(0);$('pad').appendChild(e);
+addEventListener('keydown',ev=>{if(/^[1-9]$/.test(ev.key))put(+ev.key);if(ev.key==='Backspace'||ev.key==='Delete'||ev.key==='0')put(0);const mv={ArrowUp:-9,ArrowDown:9,ArrowLeft:-1,ArrowRight:1}[ev.key];if(mv&&sel>=0){ev.preventDefault();sel=(sel+mv+81)%81;draw()}});
+document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>gen(+b.dataset.l));gen(36);
+</script>
+
+</div></body></html>

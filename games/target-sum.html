@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Target Sum | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="target-sum"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Target Sum</h1>
+<style>.n{width:62px;height:62px;font-size:26px;font-weight:800;margin:0;background:var(--bg);color:var(--ink);border:2px solid var(--line)}.n.sel{background:var(--accent);color:#fff;border-color:var(--accent)}</style>
+<div class="card"><div class="stats">Score <b id="s">0</b> · Time <b id="t">60</b> · Best <b id="b">0</b></div>
+<div class="muted">Pick numbers that add up to</div><div class="big" id="tg">?</div><div class="muted">Current: <b id="cur">0</b></div>
+<div class="grid" id="g"></div><div class="msg" id="m">Using more numbers scores more points!</div><button id="go">Start</button></div>
+<script>
+const $=id=>document.getElementById(id);let nums,sel,tg,sc,tl,iv,on=false,best=0;const R=()=>1+Math.floor(Math.random()*9);
+function newTarget(){const pool=[...nums.keys()].sort(()=>Math.random()-.5).slice(0,2+Math.floor(Math.random()*3));tg=pool.reduce((a,i)=>a+nums[i],0);$('tg').textContent=tg}
+function draw(){$('g').innerHTML='';nums.forEach((v,i)=>{const b=document.createElement('button');b.className='n'+(sel.has(i)?' sel':'');b.textContent=v||'·';b.disabled=!on;b.onclick=()=>tap(i);$('g').appendChild(b)});$('cur').textContent=[...sel].reduce((a,i)=>a+nums[i],0)}
+function tap(i){if(!on)return;sel.has(i)?sel.delete(i):sel.add(i);const s=[...sel].reduce((a,k)=>a+nums[k],0);
+if(s===tg){const pts=sel.size*sel.size;sc+=pts;$('s').textContent=sc;$('m').textContent=`✅ +${pts} (${sel.size} numbers)`;sel.forEach(k=>nums[k]=R());sel=new Set;newTarget()}
+else if(s>tg){$('m').textContent='Too much! Cleared.';sel=new Set}draw()}
+$('go').onclick=()=>{nums=[...Array(16)].map(R);sel=new Set;sc=0;tl=60;$('t').textContent=tl;on=true;$('s').textContent=0;$('go').disabled=true;$('m').textContent='Using more numbers scores more points!';newTarget();draw();
+clearInterval(iv);iv=setInterval(()=>{tl--;$('t').textContent=tl;if(tl<=0){clearInterval(iv);on=false;draw();if(sc>best){best=sc;$('b').textContent=sc}$('m').textContent=`⏰ Time! Score ${sc}`;$('go').disabled=false}},1000)};
+nums=Array(16).fill(0);sel=new Set;draw();
+</script>
+
+</div></body></html>

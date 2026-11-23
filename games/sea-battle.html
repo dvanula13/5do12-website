@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sea Battle | 5do12</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2"></head>
+<body data-game="sea-battle"><div class="wrap"><header class="game-top"><a class="arcade-brand" href="../" aria-label="5do12 home">5do12<span aria-hidden="true">.</span></a><a class="arcade-return" href="./">← All games</a></header>
+<h1 class="game-title">Sea Battle</h1>
+<style>.bd{display:inline-grid;grid-template-columns:repeat(8,30px);gap:2px;margin:6px}.q{width:30px;height:30px;background:#2f78b5;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:15px;padding:0;margin:0;border:0}
+.q.ship{background:#7f8c8d}.q.hit{background:#e74c3c}.q.miss{background:#a9cce3}.q.sunk{background:#7b241c}button.q:hover:not(:disabled){background:#3d8fd1}.boards{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}</style>
+<div class="card"><div class="boards"><div><div class="muted">Enemy waters</div><div class="bd" id="eb"></div></div><div><div class="muted">Your fleet</div><div class="bd" id="pb"></div></div></div>
+<div class="stats">Enemy ships left <b id="el">5</b> · Yours <b id="pl">5</b></div><div class="msg" id="m">Fire at the enemy grid! Ships: 4, 3, 3, 2, 2.</div><button class="alt" id="r">New battle</button></div>
+<script>
+let cpuTimer;
+const N=8,SH=[4,3,3,2,2],$=id=>document.getElementById(id);let E,P,ES,PS,over,busy,hunt;
+function fleet(){const g=Array(N*N).fill(-1),ships=[];SH.forEach((len,si)=>{for(;;){const h=Math.random()<.5,r=Math.floor(Math.random()*(h?N:N-len+1)),c=Math.floor(Math.random()*(h?N-len+1:N)),cells=[];
+for(let k=0;k<len;k++)cells.push((r+(h?0:k))*N+c+(h?k:0));if(cells.every(i=>g[i]<0)){cells.forEach(i=>g[i]=si);ships.push({cells,hits:0});break}}});return{g,ships,shot:Array(N*N).fill(0)}}
+function render(){const mk=(B,id,enemy)=>{$(id).innerHTML='';B.g.forEach((s,i)=>{const d=document.createElement(enemy?'button':'div');d.className='q';const sh=B.shot[i];const sunk=s>=0&&B.ships[s].hits===B.ships[s].cells.length;
+if(sh&&s>=0){d.classList.add(sunk?'sunk':'hit');d.textContent='💥'}else if(sh){d.classList.add('miss');d.textContent='•'}else if(!enemy&&s>=0)d.classList.add('ship');
+if(enemy){d.disabled=!!sh||over||busy;d.onclick=()=>fire(i)}$(id).appendChild(d)})};mk(E,'eb',true);mk(P,'pb',false);
+const left=B=>B.ships.filter(s=>s.hits<s.cells.length).length;$('el').textContent=left(E);$('pl').textContent=left(P)}
+function shoot(B,i){B.shot[i]=1;const s=B.g[i];if(s<0)return'miss';B.ships[s].hits++;return B.ships[s].hits===B.ships[s].cells.length?'sunk':'hit'}
+const alive=B=>B.ships.some(s=>s.hits<s.cells.length);
+function fire(i){if(over||busy||E.shot[i])return;const r=shoot(E,i);$('m').textContent=r==='miss'?'Splash — miss.':r==='hit'?'💥 Hit!':'🔥 You sank a ship!';
+if(!alive(E)){over=true;$('m').textContent='🏆 You sank the whole fleet!';render();return}busy=true;render();cpuTimer=setTimeout(cpu,600)}
+function cpu(){let i;hunt=hunt.filter(k=>!P.shot[k]);if(hunt.length)i=hunt.shift();else{const c=[];for(let k=0;k<N*N;k++)if(!P.shot[k]&&((k%N)+Math.floor(k/N))%2===0)c.push(k);const pool=c.length?c:[...Array(N*N).keys()].filter(k=>!P.shot[k]);i=pool[Math.floor(Math.random()*pool.length)]}
+const r=shoot(P,i);if(r==='hit'){const rr=Math.floor(i/N),cc=i%N;[[0,1],[0,-1],[1,0],[-1,0]].forEach(([a,b])=>{const y=rr+a,x=cc+b;if(y>=0&&y<N&&x>=0&&x<N&&!P.shot[y*N+x])hunt.unshift(y*N+x)})}if(r==='sunk')hunt=[];
+$('m').textContent+=r==='miss'?' CPU missed.':r==='hit'?' CPU hit your ship!':' CPU sank one of your ships!';busy=false;if(!alive(P)){over=true;$('m').textContent='Your fleet is gone. CPU wins.'}render()}
+function reset(){clearTimeout(cpuTimer);E=fleet();P=fleet();over=false;busy=false;hunt=[];$('m').textContent='Fire at the enemy grid! Ships: 4, 3, 3, 2, 2.';render()}
+$('r').onclick=reset;reset();
+</script>
+
+</div></body></html>
