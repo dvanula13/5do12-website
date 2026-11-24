@@ -1,5 +1,7 @@
 .contact-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 80px; border-bottom: 1px solid var(--line); }
 .contact-header > a:last-child { font-size: .95rem; }
+.contact-nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem 1rem; }
+.contact-nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: .92rem; }
 .contact-main { width: min(820px, calc(100% - 40px)); padding-block: clamp(2rem, 6vw, 4.5rem) 3rem; }
 .contact-main h1 { margin: 0 0 .7rem; font-size: clamp(2.7rem, 7vw, 4.4rem); line-height: 1.05; letter-spacing: -.055em; }
 .contact-intro { margin: 0 0 1.7rem; font-size: 1.12rem; line-height: 1.6; color: var(--muted); }

@@ -6,4 +6,7 @@ Disallow:
 
 User-agent: *
 Allow: /app-ads.txt
+Allow: /$
+Allow: /de.html$
+Allow: /assets/share-preview.jpg$
 Disallow: /
