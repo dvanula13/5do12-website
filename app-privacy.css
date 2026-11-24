@@ -1,0 +1,19 @@
+.app-policy-header, .app-policy, .app-policy-footer {
+  width: min(760px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.app-policy-header, .app-policy-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.25rem;
+  font-size: .95rem;
+}
+.app-policy-header { border-bottom: 1px solid var(--line); }
+.app-policy-footer { border-top: 1px solid var(--line); justify-content: flex-start; }
+.app-policy { padding-block: clamp(2.25rem, 6vw, 4.5rem); }
+.app-policy h1 { margin: 0 0 1.25rem; font-size: clamp(2.2rem, 6vw, 3.5rem); line-height: 1.1; }
+.app-policy h2 { margin: 2rem 0 .75rem; font-size: 1.4rem; line-height: 1.25; letter-spacing: -.025em; }
+.app-policy p { margin: 0 0 1rem; color: var(--muted); font-size: 1rem; line-height: 1.75; }
+.app-policy a { color: var(--accent); overflow-wrap: anywhere; }

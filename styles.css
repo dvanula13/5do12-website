@@ -182,6 +182,9 @@ html[lang="de"] .game-copy .button{white-space:normal}
   background: #111e32;
 }
 .app-support-grid h3 { margin: 0; font-size: 1.1rem; line-height: 1.3; }
+.app-support-identity { display: flex; align-items: flex-start; gap: .85rem; }
+.app-support-identity img { flex: 0 0 auto; border-radius: 11px; }
+.app-support-identity p { margin: .25rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
 .app-support-email {
   display: inline-flex;
   align-items: center;
