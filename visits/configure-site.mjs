@@ -15,7 +15,7 @@ const text = {
 
 function footerPanel(language) {
   const [label, owner, button, total, today, period, countries, devices] = text[language];
-  return `<details class="visit-counter" data-visit-counter hidden>
+  return `<details class="visit-counter" id="traffic" data-visit-counter hidden>
   <summary>${label}</summary>
   <div class="visit-counter-panel">
     <form autocomplete="off">
