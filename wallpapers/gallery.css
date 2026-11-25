@@ -1,0 +1,59 @@
+.wallpaper-header { min-height: 82px; }
+.wallpaper-hero {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  align-items: center;
+  gap: clamp(28px, 5vw, 90px);
+  padding-block: clamp(50px, 8vw, 117px);
+}
+.wallpaper-category {
+  color: var(--accent);
+  font-size: .875rem;
+  font-weight: 650;
+  margin: 0 0 12px;
+}
+.wallpaper-intro h1 {
+  font-size: clamp(3rem, 7vw, 6.3rem);
+  font-weight: 650;
+  letter-spacing: -.07em;
+  line-height: .98;
+  margin: 0 0 24px;
+}
+.wallpaper-intro > p:not(.wallpaper-category), .wallpaper-shop > p {
+  max-width: 37ch;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin: 0;
+}
+.wallpaper-intro > p.wallpaper-disclosure { margin-top: 11px; font-size: .85rem; }
+.wallpaper-intro > p.wallpaper-availability { margin-top: 19px; font-size: .9rem; }
+.wallpaper-hero-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.wallpaper-shop { margin-top: 25px; }
+.wallpaper-shop > p { margin-top: 9px; font-size: .84rem; }
+.wallpaper-collection { padding-block: 36px 70px; border-top: 1px solid var(--line); }
+.wallpaper-collection h2 { font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 25px; }
+.wallpaper-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.wallpaper-scene { padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: #111c2c; }
+.wallpaper-scene h3 { font-size: 1.3rem; font-weight: 650; letter-spacing: -.02em; margin: 0 0 13px; }
+.wallpaper-pair { display: grid; grid-template-columns: 1fr 2fr; align-items: start; gap: 12px; }
+.wallpaper-frame { margin: 0; }
+.wallpaper-frame img { width: 100%; height: auto; display: block; border-radius: 7px; background: var(--paper); }
+.wallpaper-frame figcaption { color: var(--muted); font-size: .78rem; margin-top: 6px; }
+.wallpaper-footer { border-top: 1px solid var(--line); }
+
+@media (max-width: 850px) {
+  .wallpaper-hero { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .wallpaper-grid { grid-template-columns: 1fr; }
+  .wallpaper-scene { padding: 16px; }
+  .wallpaper-header { min-height: 70px; }
+}
