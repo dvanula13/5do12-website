@@ -18,6 +18,14 @@ export class VisitCounter extends DurableObject {
     return this.records.readCounts();
   }
 
+  recordQrOpen() {
+    this.records.recordQrOpen();
+  }
+
+  readQrCount() {
+    return this.records.readTotal();
+  }
+
   async alarm() {
     this.records.prune();
     await this.scheduleCleanup();

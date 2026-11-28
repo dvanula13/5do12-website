@@ -1,5 +1,9 @@
 const origins = new Set(['https://5do12.de', 'https://www.5do12.de']);
 const bot = /\b(bot|crawler|spider|headlesschrome|facebookexternalhit|slurp)\b|bot\//i;
+const linkPreview = /(?:bot|crawler|spider|headlesschrome|facebookexternalhit|slurp|whatsapp|skypeuripreview)/i;
+const speculative = /\b(?:prefetch|prerender|preview)\b/i;
+const qrPath = '/qr/comic-con';
+const qrCounter = 'qr-comic-con';
 const day = 86_400_000;
 const deviceTypes = new Set(['phone', 'tablet', 'computer', 'other']);
 
@@ -32,12 +36,37 @@ async function keyMatches(header, expected) {
   return difference === 0;
 }
 
-export async function handleRequest(request, env) {
+async function recordQrOpen(env) {
+  try {
+    await env.COUNTER.getByName(qrCounter).recordQrOpen();
+  } catch {
+    // The redirect remains available when recording fails.
+  }
+}
+
+function handleQrRedirect(request, env, ctx) {
+  const headers = { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' };
+  if (!['GET', 'HEAD'].includes(request.method)) {
+    return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } });
+  }
+  const agent = request.headers.get('User-Agent');
+  if (request.method === 'GET' && agent && !linkPreview.test(agent)
+    && !speculative.test(request.headers.get('Sec-Purpose') ?? '')
+    && !speculative.test(request.headers.get('Purpose') ?? '')
+    && request.headers.get('Sec-GPC') !== '1' && request.headers.get('DNT') !== '1') {
+    ctx.waitUntil(recordQrOpen(env));
+  }
+  return new Response(null, { status: 302, headers: { ...headers, Location: 'https://5do12.de/' } });
+}
+
+export async function handleRequest(request, env, ctx) {
   const path = new URL(request.url).pathname;
+  if (path === qrPath || path === `${qrPath}/`) return handleQrRedirect(request, env, ctx);
   const origin = request.headers.get('Origin');
-  if (!origins.has(origin)) return new Response(null, { status: 403 });
-  const headers = cors(origin);
-  const stats = path === '/stats';
+  const qrStats = path === `${qrPath}/stats`;
+  if (!origins.has(origin) && !(qrStats && origin === null)) return new Response(null, { status: 403 });
+  const headers = origin ? cors(origin) : { 'Cache-Control': 'no-store' };
+  const stats = path === '/stats' || qrStats;
   if (!stats && path !== '/view') return new Response(null, { status: 404, headers });
 
   if (request.method === 'OPTIONS' && stats) {
@@ -53,6 +82,10 @@ export async function handleRequest(request, env) {
     return new Response(null, { status: 401, headers });
   }
 
+  if (qrStats) {
+    const total = await env.COUNTER.getByName(qrCounter).readQrCount();
+    return Response.json({ total }, { headers });
+  }
   const counter = env.COUNTER.getByName('site');
   if (stats) return Response.json(await counter.readCounts(), { headers });
 
@@ -66,6 +99,7 @@ export async function handleRequest(request, env) {
 
 const addBucket = `INSERT INTO daily_counts (day, dimension, label, opens) VALUES (?, ?, ?, 1)
   ON CONFLICT (day, dimension, label) DO UPDATE SET opens = opens + 1`;
+const addLifetime = 'INSERT INTO lifetime VALUES (1, 1) ON CONFLICT (id) DO UPDATE SET opens = opens + 1';
 
 export class VisitStorage {
   constructor(storage) {
@@ -80,15 +114,23 @@ export class VisitStorage {
   record(country, device, now = Date.now()) {
     const date = dayKey(now);
     this.storage.transactionSync(() => {
-      this.sql.exec('INSERT INTO lifetime VALUES (1, 1) ON CONFLICT (id) DO UPDATE SET opens = opens + 1');
+      this.sql.exec(addLifetime);
       this.sql.exec(addBucket, date, 'country', countryCode(country));
       this.sql.exec(addBucket, date, 'device', deviceTypes.has(device) ? device : 'other');
     });
   }
 
+  recordQrOpen() {
+    this.sql.exec(addLifetime);
+  }
+
+  readTotal() {
+    return this.sql.exec('SELECT COALESCE(SUM(opens), 0) AS opens FROM lifetime').one().opens;
+  }
+
   readCounts(now = Date.now()) {
     const from = dayKey(now - 29 * day);
-    const total = this.sql.exec('SELECT COALESCE(SUM(opens), 0) AS opens FROM lifetime').one().opens;
+    const total = this.readTotal();
     const today = this.sql.exec(`SELECT COALESCE(SUM(opens), 0) AS opens FROM daily_counts
       WHERE day = ? AND dimension = 'device'`, dayKey(now)).one().opens;
     const grouped = dimension => this.sql.exec(`SELECT label, SUM(opens) AS opens FROM daily_counts

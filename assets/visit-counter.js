@@ -25,7 +25,30 @@
   const button = form.querySelector('button');
   const status = counter.querySelector('[role="status"]');
   const result = counter.querySelector('[data-visit-results]');
+  const qrCount = result.querySelector('[data-qr-total]');
   let request;
+
+  function loadStats(path, ownerKey, signal) {
+    return fetch(`${endpoint}${path}`, {
+      credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer',
+      headers: { Authorization: `Bearer ${ownerKey}` },
+      signal,
+    });
+  }
+
+  async function showQrCount(ownerKey, signal) {
+    if (!qrCount) return;
+    try {
+      const response = await loadStats('/qr/comic-con/stats', ownerKey, signal);
+      if (!response.ok) return;
+      const { total } = await response.json();
+      if (signal.aborted || !Number.isSafeInteger(total) || total < 0) return;
+      qrCount.textContent = number.format(total);
+      qrCount.parentElement.hidden = false;
+    } catch {
+      // The page-open totals remain available if the QR request fails.
+    }
+  }
 
   function showBreakdown(selector, rows, name) {
     const list = result.querySelector(selector);
@@ -50,33 +73,40 @@
     const ownerKey = key.value.trim();
     key.value = '';
     result.hidden = true;
+    if (qrCount) {
+      qrCount.textContent = '';
+      qrCount.parentElement.hidden = true;
+    }
     button.disabled = true;
     status.textContent = german ? 'Statistik wird geladen …' : 'Loading stats…';
-    request = new AbortController();
+    request?.abort();
+    const currentRequest = new AbortController();
+    request = currentRequest;
 
     try {
-      const response = await fetch(`${endpoint}/stats`, {
-        credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer',
-        headers: { Authorization: `Bearer ${ownerKey}` },
-        signal: request.signal,
-      });
+      const response = await loadStats('/stats', ownerKey, currentRequest.signal);
+      if (currentRequest.signal.aborted) return;
       if (response.status === 401) {
         status.textContent = german ? 'Der Zugangsschlüssel ist ungültig.' : 'The owner key is incorrect.';
         return;
       }
       if (!response.ok) throw new Error('Stats unavailable');
       const data = await response.json();
+      if (currentRequest.signal.aborted) return;
       result.querySelector('[data-visit-total]').textContent = number.format(data.total);
       result.querySelector('[data-visit-today]').textContent = number.format(data.today);
       showBreakdown('[data-visit-countries]', data.countries, code => code === 'unknown' ? (german ? 'Unbekannt' : 'Unknown') : countries.of(code));
       showBreakdown('[data-visit-devices]', data.devices, device => devices[device]);
       result.hidden = false;
       status.textContent = german ? 'Statistik geladen.' : 'Stats loaded.';
+      await showQrCount(ownerKey, currentRequest.signal);
     } catch {
-      if (!request.signal.aborted) status.textContent = german ? 'Statistik gerade nicht verfügbar.' : 'Stats are temporarily unavailable.';
+      if (!currentRequest.signal.aborted) status.textContent = german ? 'Statistik gerade nicht verfügbar.' : 'Stats are temporarily unavailable.';
     } finally {
-      request = undefined;
-      button.disabled = false;
+      if (request === currentRequest) {
+        request = undefined;
+        button.disabled = false;
+      }
     }
   });
 
