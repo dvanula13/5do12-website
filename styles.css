@@ -101,6 +101,27 @@ html[lang="de"] .game-copy .button{white-space:normal}
 .footer-main nav a[href^="mailto:"]{overflow-wrap:anywhere}
 @media(max-width:760px){.language-bar{padding-block:.375rem}.language-label{margin-right:.25rem}.language-switcher{gap:.125rem}.language-switcher a{padding:.625rem .75rem}html[lang="de"] .site-nav{gap:0}}
 
+.homepage-utility { justify-content: space-between; gap: .5rem; }
+.header-support-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: .8125rem;
+  line-height: 1.25;
+  text-decoration: underline;
+  text-decoration-color: #596f8b;
+  text-underline-offset: .2em;
+}
+.header-support-link:hover, .header-support-link:focus-visible {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+@media (max-width: 480px) {
+  .homepage-utility .language-label { display: none; }
+}
+
+
 .project-process { margin-top: clamp(2.5rem, 6vw, 4.5rem); }
 .project-process > h3 {
   margin: 0 0 1.2rem;
