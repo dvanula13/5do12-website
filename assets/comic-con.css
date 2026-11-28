@@ -1,18 +1,52 @@
 .comic-con-theme #main {
   position: relative;
   isolation: isolate;
+  overflow-x: clip;
 }
 
-.comic-con-theme .studio-intro {
+.comic-con-theme .studio-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -2;
+  block-size: clamp(32rem, 53vw, 56rem);
+  pointer-events: none;
   background-image:
-    radial-gradient(2px 2px at 12% 21%, #7edcea55 72%, transparent),
-    radial-gradient(2px 2px at 42% 81%, #c19aef50 72%, transparent),
-    radial-gradient(2px 2px at 70% 12%, #ffd28d60 72%, transparent),
-    radial-gradient(3px 3px at 95% 77%, #8eddea65 72%, transparent);
+    linear-gradient(90deg, #080e1a26, #080e1ab3 26%, #080e1a9c 57%, #080e1a20),
+    url("comic-con-night.webp");
+  background-position: center top;
+  background-size: cover;
+  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 57%, transparent 100%);
+}
+
+.comic-con-theme .released-apps,
+.comic-con-theme #services,
+.comic-con-theme .services-intro,
+.comic-con-theme #app-support {
+  position: relative;
+}
+
+.comic-con-theme .services-intro {
+  isolation: isolate;
+}
+
+.comic-con-theme .services-intro::before {
+  content: "";
+  position: absolute;
+  inset: -3rem -1.5rem -3.5rem;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, #bd93f290 1px, transparent 1.8px) 0 0 / 10px 10px,
+    repeating-conic-gradient(from 224deg at 64% 110%, #6854ae62 0deg 1.2deg, transparent 1.5deg 9deg),
+    linear-gradient(115deg, #16384c, #271a46 65%, #173b57);
+  mask-image: radial-gradient(ellipse at 68% 54%, #000 5%, #0009 42%, transparent 74%);
 }
 
 .comic-con-theme .released-apps {
-  position: relative;
+  border-color: #568096;
+  background: radial-gradient(ellipse at 93% 0%, #322956, transparent 74%), #142537;
+  box-shadow: 0 24px 50px #0005, 0 0 35px #7666cc1c;
 }
 
 .comic-con-theme .released-apps::after,
@@ -20,6 +54,7 @@
 .comic-con-theme #main::after,
 .comic-con-theme #services::before,
 .comic-con-theme #services::after,
+.comic-con-theme #app-support::after,
 .comic-con-theme .service-card:nth-child(2)::after,
 .comic-con-theme .service-card:nth-child(4)::after {
   content: "";
@@ -34,14 +69,42 @@
 }
 
 .comic-con-theme .released-apps::after {
-  --mascot-size: clamp(98px, 10vw, 154px);
+  --mascot-size: clamp(112px, 12vw, 176px);
   --mascot-position: 0% 0%;
   inset-block-start: calc(var(--mascot-size) * -.77);
   inset-inline-end: 1rem;
 }
 
-.comic-con-theme #main::before,
-.comic-con-theme #main::after,
+.comic-con-theme #main::before {
+  --mascot-size: clamp(126px, 16vw, 212px);
+  --mascot-position: 0% 100%;
+  inset-block-start: .5rem;
+  inset-inline-start: max(0px, calc((100% - 1340px) / 2));
+  z-index: -1;
+  opacity: .27;
+  rotate: -9deg;
+}
+
+.comic-con-theme #main::after {
+  --mascot-size: clamp(132px, 16vw, 222px);
+  --mascot-position: 100% 100%;
+  inset-block-start: 10rem;
+  inset-inline-end: 1rem;
+  z-index: -1;
+  opacity: .29;
+  rotate: 11deg;
+}
+
+.comic-con-theme #app-support::after {
+  --mascot-size: clamp(72px, 10vw, 128px);
+  --mascot-position: 0% 100%;
+  inset-block-start: -1.5rem;
+  inset-inline-end: 1rem;
+  z-index: -1;
+  opacity: .43;
+  rotate: 7deg;
+}
+
 .comic-con-theme #services::before,
 .comic-con-theme #services::after,
 .comic-con-theme .service-card:nth-child(2)::after,
@@ -50,21 +113,39 @@
 }
 
 @media (max-width: 760px) {
+  .comic-con-theme .studio-intro::before {
+    block-size: 39rem;
+    background-image: linear-gradient(90deg, #080e1ac9 0%, #080e1a5c 74%), url("comic-con-night.webp");
+    background-position: 71% top;
+  }
+
   .comic-con-theme #main::before {
-    --mascot-size: clamp(77px, 23vw, 114px);
-    --mascot-position: 0% 100%;
-    display: block;
+    --mascot-size: clamp(85px, 26vw, 122px);
     inset-block-start: .3rem;
-    inset-inline-end: .65rem;
-    z-index: -1;
-    opacity: .26;
+    inset-inline: auto .65rem;
+    opacity: .47;
     rotate: 8deg;
   }
 
+  .comic-con-theme #main::after {
+    display: none;
+  }
+
   .comic-con-theme .released-apps::after {
-    --mascot-size: clamp(62px, 17vw, 76px);
-    inset-block-start: -27px;
+    --mascot-size: clamp(68px, 19vw, 86px);
+    inset-block-start: -33px;
     inset-inline-end: .25rem;
+  }
+
+  .comic-con-theme #services::after {
+    --mascot-size: clamp(86px, 24vw, 122px);
+    --mascot-position: 100% 0%;
+    display: block;
+    inset-block-start: .8rem;
+    inset-inline-end: -.1rem;
+    z-index: -1;
+    opacity: .38;
+    rotate: 10deg;
   }
 }
 
@@ -76,7 +157,7 @@
 
   .comic-con-theme .service-card:nth-child(2)::after,
   .comic-con-theme .service-card:nth-child(4)::after {
-    --mascot-size: clamp(76px, 8vw, 122px);
+    --mascot-size: clamp(86px, 9vw, 140px);
     display: block;
     inset-block-start: calc(var(--mascot-size) * -.86);
     inset-inline-end: .8rem;
@@ -92,18 +173,14 @@
 }
 
 @media (min-width: 1540px) {
-  .comic-con-theme #services {
-    position: relative;
-  }
-
   .comic-con-theme #main::before,
   .comic-con-theme #main::after,
   .comic-con-theme #services::before,
   .comic-con-theme #services::after {
-    --mascot-size: clamp(110px, 10vw, 210px);
+    --mascot-size: clamp(135px, 13vw, 230px);
     display: block;
     z-index: -1;
-    opacity: .2;
+    opacity: .37;
   }
 
   .comic-con-theme #main::before {
@@ -132,12 +209,6 @@
     inset-block-start: 12px;
     inset-inline-start: calc(100% + clamp(-30px, 4vw - 65px, 36px));
     rotate: 9deg;
-  }
-
-  /* The decorations may extend beyond the side gutters near the breakpoint. */
-  .comic-con-theme #main {
-    overflow-x: clip;
-    overflow-clip-margin: 8px;
   }
 }
 
