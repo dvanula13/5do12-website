@@ -22,8 +22,7 @@
 .comic-con-theme .released-apps,
 .comic-con-theme #services,
 .comic-con-theme #deep-vein,
-.comic-con-theme .services-intro,
-.comic-con-theme #app-support {
+.comic-con-theme .services-intro {
   position: relative;
 }
 
@@ -114,8 +113,7 @@
 .comic-con-theme #main::before,
 .comic-con-theme #main::after,
 .comic-con-theme #services::after,
-.comic-con-theme #deep-vein::after,
-.comic-con-theme #app-support::after {
+.comic-con-theme #deep-vein::after {
   content: "";
   position: absolute;
   inline-size: var(--mascot-size);
@@ -179,14 +177,42 @@
   rotate: 11deg;
 }
 
-.comic-con-theme #app-support::after {
-  --mascot-size: clamp(72px, 10vw, 128px);
-  --mascot-position: 0% 100%;
-  inset-block-start: -.85rem;
-  inset-inline-end: 1rem;
-  z-index: -1;
-  opacity: .52;
-  rotate: 7deg;
+.comic-con-theme :is(#app-support, #studio, #support, #questions)::after {
+  content: "";
+  position: absolute;
+  inset-block-start: var(--guest-top, .35rem);
+  inset-inline-end: var(--guest-edge, .5rem);
+  inline-size: clamp(86px, 11vw, 132px);
+  aspect-ratio: 1;
+  z-index: 1;
+  pointer-events: none;
+  background: url("comic-con-guests.webp") var(--guest-position) / 200% 200% no-repeat;
+  filter: drop-shadow(0 6px 10px #080e1a9c);
+  rotate: var(--guest-tilt);
+}
+
+.comic-con-theme #app-support {
+  --guest-position: 0% 0%;
+  --guest-top: -.6rem;
+  --guest-tilt: -7deg;
+}
+
+.comic-con-theme #studio {
+  --guest-position: 100% 0%;
+  --guest-edge: max(.8rem, calc((100% - 1280px) / 2));
+  --guest-tilt: 7deg;
+}
+
+.comic-con-theme #support {
+  --guest-position: 0% 100%;
+  --guest-edge: max(.8rem, calc((100% - 1280px) / 2));
+  --guest-top: -.4rem;
+  --guest-tilt: -5deg;
+}
+
+.comic-con-theme #questions {
+  --guest-position: 100% 100%;
+  --guest-tilt: 7deg;
 }
 
 .comic-con-theme :is(#app, #app-support, #studio, #support, #questions, .closing-section, .footer) {
@@ -269,12 +295,24 @@
     --mascot-size: clamp(88px, 25vw, 127px);
     inset-block-start: .35rem;
   }
+
+  .comic-con-theme :is(#app-support, #studio, #support, #questions)::after {
+    inline-size: clamp(76px, 24vw, 105px);
+  }
+
+  .comic-con-theme #support .support-copy {
+    min-inline-size: 0;
+  }
 }
 
 @media (max-width: 480px) {
   .comic-con-theme .services-intro::before {
     inset: -2rem -.75rem -2.5rem;
     mask-image: radial-gradient(ellipse at 81% 35%, #000 7%, #000b 43%, transparent 76%);
+  }
+
+  .comic-con-theme #support .support-copy h2 {
+    font-size: clamp(1.8rem, 8.7vw, 2.25rem);
   }
 }
 
@@ -310,7 +348,8 @@
 
   @supports (animation-timeline: view()) {
     .comic-con-theme #services::after,
-    .comic-con-theme #deep-vein::after {
+    .comic-con-theme #deep-vein::after,
+    .comic-con-theme :is(#app-support, #studio, #support, #questions)::after {
       animation: comic-con-pop ease-out both;
       animation-timeline: view();
       animation-range: entry 5% cover 25%;
