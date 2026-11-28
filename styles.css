@@ -201,3 +201,32 @@ html[lang="de"] .game-copy .button{white-space:normal}
 @media (max-width: 620px) {
   .app-support-grid, .process-steps { grid-template-columns: minmax(0, 1fr); }
 }
+
+.header-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-block: 8px;
+}
+
+.header-play-link {
+  justify-content: flex-start;
+  gap: 7px;
+  min-height: 44px;
+  padding: 8px 11px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.header-play-link .icon {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 760px) {
+  .header-brand + .menu-toggle {
+    align-self: flex-start;
+    margin-block-start: 8px;
+  }
+}
