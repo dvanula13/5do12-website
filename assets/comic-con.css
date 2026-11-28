@@ -9,14 +9,14 @@
   position: absolute;
   inset: 0 0 auto;
   z-index: -2;
-  block-size: clamp(32rem, 53vw, 56rem);
+  block-size: clamp(37rem, 56vw, 59rem);
   pointer-events: none;
   background-image:
-    linear-gradient(90deg, #080e1a26, #080e1ab3 26%, #080e1a9c 57%, #080e1a20),
+    linear-gradient(90deg, #080e1a18, #080e1a9c 26%, #080e1a87 59%, #080e1a14),
     url("comic-con-night.webp");
   background-position: center top;
   background-size: cover;
-  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 57%, transparent 100%);
+  mask-image: linear-gradient(180deg, #0004, #000 12%, #000 65%, transparent 100%);
 }
 
 .comic-con-theme .released-apps,
@@ -41,6 +41,23 @@
     repeating-conic-gradient(from 224deg at 64% 110%, #6854ae62 0deg 1.2deg, transparent 1.5deg 9deg),
     linear-gradient(115deg, #16384c, #271a46 65%, #173b57);
   mask-image: radial-gradient(ellipse at 68% 54%, #000 5%, #0009 42%, transparent 74%);
+}
+
+@media (min-width: 761px) {
+  .comic-con-theme .services-grid::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 1rem;
+    inset-inline: calc(50% - 50vw);
+    block-size: clamp(28rem, 43vw, 45rem);
+    z-index: -2;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, #1a123a60, #080e1ace 28%, #080e1abc 70%, #18183d42),
+      url("comic-con-night.webp") center 79% / cover;
+    mask-image: linear-gradient(180deg, transparent, #000 35%, #000 62%, transparent);
+    scale: -1 1;
+  }
 }
 
 .comic-con-theme .released-apps {
@@ -129,12 +146,12 @@
 
 @media (max-width: 760px) {
   .comic-con-theme .studio-intro::before {
-    block-size: 41rem;
+    block-size: 43rem;
     background-image:
-      linear-gradient(90deg, #080e1ac9 0%, #080e1ab5 47%, #080e1a91 72%, #080e1a35 100%),
-      url("comic-con-night.webp");
-    background-position: 89% top;
-    mask-image: linear-gradient(180deg, #0006 0%, #000 13%, #000 70%, transparent 100%);
+      linear-gradient(90deg, #080e1a95, #080e1a65 47%, #080e1a38),
+      url("comic-con-portrait.webp");
+    background-position: center top;
+    mask-image: linear-gradient(180deg, #0009 0%, #000 12%, #000 76%, transparent 100%);
   }
 
   .comic-con-theme .studio-intro .hero-description {
@@ -173,10 +190,6 @@
 }
 
 @media (max-width: 480px) {
-  .comic-con-theme .studio-intro::before {
-    background-position: 94% top;
-  }
-
   .comic-con-theme .services-intro::before {
     inset: -2rem -.75rem -2.5rem;
     mask-image: radial-gradient(ellipse at 81% 35%, #000 7%, #000b 43%, transparent 76%);
