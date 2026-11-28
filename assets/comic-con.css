@@ -21,13 +21,59 @@
 
 .comic-con-theme .released-apps,
 .comic-con-theme #services,
+.comic-con-theme #deep-vein,
 .comic-con-theme .services-intro,
 .comic-con-theme #app-support {
   position: relative;
 }
 
+.comic-scene {
+  display: none;
+}
+
+.comic-con-theme .comic-scene {
+  --scene-height: clamp(31rem, 51vw, 54rem);
+  --scene-position: center 48%;
+  --scene-shade: #100e2bc2;
+  display: block;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: calc(50% - 50vw);
+  block-size: var(--scene-height);
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, transparent, #000 17%, #000 63%, transparent);
+}
+
+.comic-con-theme .comic-scene img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: var(--scene-position);
+}
+
+.comic-con-theme .comic-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #080e1a45, var(--scene-shade) 34%, var(--scene-shade) 63%, #080e1a4a);
+}
+
+.comic-con-theme .comic-scene-mine {
+  --scene-height: clamp(34rem, 56vw, 59rem);
+  --scene-position: center 57%;
+  --scene-shade: #0a1628c7;
+}
+
 .comic-con-theme .services-intro {
   isolation: isolate;
+}
+
+.comic-con-theme .services-intro > p {
+  color: #d5deed;
+  text-shadow: 0 1px 5px #080e1a;
 }
 
 .comic-con-theme .services-intro::before {
@@ -41,23 +87,6 @@
     repeating-conic-gradient(from 224deg at 64% 110%, #6854ae62 0deg 1.2deg, transparent 1.5deg 9deg),
     linear-gradient(115deg, #16384c, #271a46 65%, #173b57);
   mask-image: radial-gradient(ellipse at 68% 54%, #000 5%, #0009 42%, transparent 74%);
-}
-
-@media (min-width: 761px) {
-  .comic-con-theme .services-grid::before {
-    content: "";
-    position: absolute;
-    inset-block-start: 1rem;
-    inset-inline: calc(50% - 50vw);
-    block-size: clamp(28rem, 43vw, 45rem);
-    z-index: -2;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, #1a123a60, #080e1ace 28%, #080e1abc 70%, #18183d42),
-      url("comic-con-night.webp") center 79% / cover;
-    mask-image: linear-gradient(180deg, transparent, #000 35%, #000 62%, transparent);
-    scale: -1 1;
-  }
 }
 
 .comic-con-theme .released-apps {
@@ -84,11 +113,9 @@
 .comic-con-theme .released-apps::after,
 .comic-con-theme #main::before,
 .comic-con-theme #main::after,
-.comic-con-theme #services::before,
 .comic-con-theme #services::after,
-.comic-con-theme #app-support::after,
-.comic-con-theme .service-card:nth-child(2)::after,
-.comic-con-theme .service-card:nth-child(4)::after {
+.comic-con-theme #deep-vein::after,
+.comic-con-theme #app-support::after {
   content: "";
   position: absolute;
   inline-size: var(--mascot-size);
@@ -105,6 +132,31 @@
   --mascot-position: 0% 0%;
   inset-block-start: calc(var(--mascot-size) * -.77);
   inset-inline-end: 1rem;
+}
+
+.comic-con-theme #services::after,
+.comic-con-theme #deep-vein::after {
+  --mascot-size: clamp(89px, 15vw, 156px);
+  inset-block-start: clamp(.1rem, 2vw, 1rem);
+  inset-inline-end: clamp(.2rem, 2vw, 1.2rem);
+  filter: drop-shadow(0 7px 10px #080e1aaa);
+  rotate: 6deg;
+}
+
+.comic-con-theme #services::after {
+  --mascot-position: 100% 0%;
+}
+
+.comic-con-theme #deep-vein::after {
+  --mascot-position: 100% 100%;
+  rotate: -7deg;
+}
+
+.comic-con-theme #deep-vein .game-card {
+  border-color: #4a6179;
+  background:
+    radial-gradient(ellipse at 93% 14%, #244c5c50, transparent 63%),
+    linear-gradient(90deg, #101d30f5, #101d30da 58%, #101d3096);
 }
 
 .comic-con-theme #main::before {
@@ -130,18 +182,42 @@
 .comic-con-theme #app-support::after {
   --mascot-size: clamp(72px, 10vw, 128px);
   --mascot-position: 0% 100%;
-  inset-block-start: -1.5rem;
+  inset-block-start: -.85rem;
   inset-inline-end: 1rem;
   z-index: -1;
-  opacity: .43;
+  opacity: .52;
   rotate: 7deg;
 }
 
-.comic-con-theme #services::before,
-.comic-con-theme #services::after,
-.comic-con-theme .service-card:nth-child(2)::after,
-.comic-con-theme .service-card:nth-child(4)::after {
-  display: none;
+.comic-con-theme :is(#app, #app-support, #studio, #support, #questions, .closing-section, .footer) {
+  --comic-texture-color: #7f9bcb53;
+  --comic-glow: #184563a8;
+  --comic-origin: 88% 18%;
+  position: relative;
+  isolation: isolate;
+}
+
+.comic-con-theme :is(#app, #app-support, #studio, #support, #questions, .closing-section, .footer)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, var(--comic-texture-color) 1px, transparent 1.8px) 0 0 / 9px 9px,
+    repeating-conic-gradient(from 218deg at var(--comic-origin), var(--comic-texture-color) 0deg .9deg, transparent 1.1deg 10deg),
+    radial-gradient(ellipse at var(--comic-origin), var(--comic-glow), transparent 67%);
+  mask-image: radial-gradient(ellipse at var(--comic-origin), #000 5%, #0009 43%, transparent 76%);
+}
+
+.comic-con-theme :is(#app, #studio, #questions) {
+  --comic-texture-color: #b996ef45;
+  --comic-glow: #3e226c9c;
+  --comic-origin: 13% 22%;
+}
+
+.comic-con-theme :is(.closing-section, .footer) {
+  --comic-origin: 90% 90%;
 }
 
 @media (max-width: 760px) {
@@ -163,7 +239,7 @@
     --mascot-size: clamp(85px, 26vw, 122px);
     inset-block-start: .3rem;
     inset-inline: auto .65rem;
-    opacity: .47;
+    opacity: .75;
     rotate: 8deg;
   }
 
@@ -177,15 +253,21 @@
     inset-inline-end: .25rem;
   }
 
-  .comic-con-theme #services::after {
-    --mascot-size: clamp(86px, 24vw, 122px);
-    --mascot-position: 100% 0%;
-    display: block;
-    inset-block-start: .8rem;
-    inset-inline-end: -.1rem;
-    z-index: -1;
-    opacity: .5;
-    rotate: 10deg;
+  .comic-con-theme .comic-scene {
+    --scene-height: clamp(37rem, 128vw, 54rem);
+    --scene-position: 70% center;
+    --scene-shade: #100e2b8f;
+    inset-block-start: .75rem;
+  }
+
+  .comic-con-theme .comic-scene-mine {
+    --scene-position: right center;
+  }
+
+  .comic-con-theme #services::after,
+  .comic-con-theme #deep-vein::after {
+    --mascot-size: clamp(88px, 25vw, 127px);
+    inset-block-start: .35rem;
   }
 }
 
@@ -196,34 +278,9 @@
   }
 }
 
-@media (min-width: 1061px) {
-  .comic-con-theme .service-card:nth-child(2),
-  .comic-con-theme .service-card:nth-child(4) {
-    position: relative;
-  }
-
-  .comic-con-theme .service-card:nth-child(2)::after,
-  .comic-con-theme .service-card:nth-child(4)::after {
-    --mascot-size: clamp(86px, 9vw, 140px);
-    display: block;
-    inset-block-start: calc(var(--mascot-size) * -.86);
-    inset-inline-end: .8rem;
-  }
-
-  .comic-con-theme .service-card:nth-child(2)::after {
-    --mascot-position: 100% 0%;
-  }
-
-  .comic-con-theme .service-card:nth-child(4)::after {
-    --mascot-position: 100% 100%;
-  }
-}
-
 @media (min-width: 1540px) {
   .comic-con-theme #main::before,
-  .comic-con-theme #main::after,
-  .comic-con-theme #services::before,
-  .comic-con-theme #services::after {
+  .comic-con-theme #main::after {
     --mascot-size: clamp(135px, 13vw, 230px);
     display: block;
     z-index: -1;
@@ -244,19 +301,6 @@
     rotate: 12deg;
   }
 
-  .comic-con-theme #services::before {
-    --mascot-position: 100% 0%;
-    inset-block-start: 32px;
-    inset-inline-end: calc(100% + clamp(-30px, 4vw - 65px, 36px));
-    rotate: -9deg;
-  }
-
-  .comic-con-theme #services::after {
-    --mascot-position: 0% 100%;
-    inset-block-start: 12px;
-    inset-inline-start: calc(100% + clamp(-30px, 4vw - 65px, 36px));
-    rotate: 9deg;
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -264,14 +308,13 @@
     animation: comic-con-arrive 1.1s ease-out .12s both;
   }
 
-  .comic-con-theme .service-card:nth-child(2)::after,
-  .comic-con-theme .service-card:nth-child(4)::after {
-    transition: translate .22s ease-out;
-  }
-
-  .comic-con-theme .service-card:hover::after,
-  .comic-con-theme .service-card:focus-within::after {
-    translate: 0 -5px;
+  @supports (animation-timeline: view()) {
+    .comic-con-theme #services::after,
+    .comic-con-theme #deep-vein::after {
+      animation: comic-con-pop ease-out both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 25%;
+    }
   }
 }
 
@@ -279,4 +322,9 @@
   0% { opacity: 0; translate: 0 -14px; rotate: -7deg; }
   57% { opacity: 1; translate: 0 3px; rotate: 2deg; }
   100% { opacity: 1; translate: 0 0; rotate: 0deg; }
+}
+
+@keyframes comic-con-pop {
+  from { translate: 0 10px; scale: .93; }
+  to { translate: 0 0; scale: 1; }
 }
