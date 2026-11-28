@@ -9,4 +9,5 @@ Allow: /app-ads.txt
 Allow: /$
 Allow: /de.html$
 Allow: /assets/share-preview.jpg$
+Allow: /assets/studio-share-preview.jpg$
 Disallow: /
