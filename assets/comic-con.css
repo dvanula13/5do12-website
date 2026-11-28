@@ -49,6 +49,21 @@
   box-shadow: 0 24px 50px #0005, 0 0 35px #7666cc1c;
 }
 
+.comic-con-theme .released-apps::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  inline-size: min(42%, 12rem);
+  block-size: 5.5rem;
+  border-start-end-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, #9d9ce974 1px, transparent 1.8px) 0 0 / 8px 8px,
+    repeating-linear-gradient(132deg, #7769ed35 0 2px, transparent 2px 13px);
+  mask-image: radial-gradient(ellipse at 100% 0%, #000 5%, #000a 30%, transparent 73%);
+}
+
 .comic-con-theme .released-apps::after,
 .comic-con-theme #main::before,
 .comic-con-theme #main::after,
@@ -114,9 +129,17 @@
 
 @media (max-width: 760px) {
   .comic-con-theme .studio-intro::before {
-    block-size: 39rem;
-    background-image: linear-gradient(90deg, #080e1ac9 0%, #080e1a5c 74%), url("comic-con-night.webp");
-    background-position: 71% top;
+    block-size: 41rem;
+    background-image:
+      linear-gradient(90deg, #080e1ac9 0%, #080e1ab5 47%, #080e1a91 72%, #080e1a35 100%),
+      url("comic-con-night.webp");
+    background-position: 89% top;
+    mask-image: linear-gradient(180deg, #0006 0%, #000 13%, #000 70%, transparent 100%);
+  }
+
+  .comic-con-theme .studio-intro .hero-description {
+    color: #d3dff0;
+    text-shadow: 0 1px 5px #080e1a;
   }
 
   .comic-con-theme #main::before {
@@ -144,8 +167,19 @@
     inset-block-start: .8rem;
     inset-inline-end: -.1rem;
     z-index: -1;
-    opacity: .38;
+    opacity: .5;
     rotate: 10deg;
+  }
+}
+
+@media (max-width: 480px) {
+  .comic-con-theme .studio-intro::before {
+    background-position: 94% top;
+  }
+
+  .comic-con-theme .services-intro::before {
+    inset: -2rem -.75rem -2.5rem;
+    mask-image: radial-gradient(ellipse at 81% 35%, #000 7%, #000b 43%, transparent 76%);
   }
 }
 
