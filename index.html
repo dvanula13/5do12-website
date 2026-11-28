@@ -23,7 +23,7 @@
   <title>5do12 — Android apps, games &amp; software</title>
   <link rel="icon" href="favicon.svg?v=20261118" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/InstrumentSans.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20261128-android">
+  <link rel="stylesheet" href="styles.css?v=20261128-public-apps">
   <script src="site.js?v=20261121" defer></script>
   <script type="application/ld+json">
 {
@@ -56,6 +56,17 @@
       "publisher": {
         "@id": "https://5do12.de/#5do12"
       }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://5do12.de/#gravitile",
+      "name": "Gravitile",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Android",
+      "installUrl": "https://play.google.com/store/apps/details?id=com.gravitile.game",
+      "publisher": {
+        "@id": "https://5do12.de/#5do12"
+      }
     }
   ]
 }
@@ -73,48 +84,48 @@
     </nav>
   </div>
   <header class="site-header wrap" id="top">
-    <div class="header-brand">
-      <a class="brand" href="./" aria-label="5do12 home"><span class="brand-mark" aria-hidden="true"></span><span>5do12</span></a>
-      <a class="button header-play-link" href="https://play.google.com/store/apps/developer?id=5do12" aria-label="5do12 Android apps on Google Play">
-        <svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>
-        Android · Google Play
-      </a>
-    </div>
+    <a class="brand" href="./" aria-label="5do12 home"><span class="brand-mark" aria-hidden="true"></span><span>5do12</span></a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg></button>
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
-      <a href="#services">What we build</a><a href="services/">Service catalog</a><a href="#app">Our apps</a><a href="#app-support">App support</a><a href="#studio">The studio</a>
+      <a href="#android-apps">Our apps</a><a href="#services">What we build</a><a href="services/">Service catalog</a><a href="#app-support">App support</a><a href="#studio">The studio</a>
       <a class="button button-small" href="contact/">Start a project <span aria-hidden="true">↗</span></a>
     </nav>
   </header>
 
   <main id="main">
-    <section class="hero wrap" aria-labelledby="hero-title">
+    <section class="hero studio-intro wrap" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> INDEPENDENT SOFTWARE STUDIO</p>
         <h1 id="hero-title" class="studio-title">5do12</h1>
-        <p class="hero-description">We make Android apps and games, and build websites and custom software for small businesses and independent projects.</p>
-        <div class="hero-actions"><a class="button" href="https://play.google.com/store/apps/developer?id=5do12"><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Explore on Google Play</a><a class="text-link" href="contact/">Start a project <span aria-hidden="true">↗</span></a></div>
-        <div class="hero-signoff"><span class="little-spark" aria-hidden="true">✳</span><p>Based in Germany.</p></div>
+        <p class="hero-description">Android apps and games, plus websites and custom software.</p>
+        <div class="hero-actions"><a class="button" href="https://play.google.com/store/apps/developer?id=5do12"><svg class="icon" aria-hidden="true"><use href="#i-play"></use></svg>Google Play</a><a class="text-link" href="contact/">Start a project <span aria-hidden="true">↗</span></a></div>
       </div>
-      <div class="studio-showcase" role="group" aria-label="Explore 5do12’s apps and services">
-        <div class="studio-showcase-content">
-          <a class="studio-showcase-feature" href="#app-support">
-            <span class="showcase-app-icons" aria-hidden="true">
-              <img src="assets/deep-vein-icon.webp" alt="" width="52" height="52">
-              <img src="assets/app-icons/life-vault.png" alt="" width="52" height="52">
-              <img src="assets/app-icons/gravitile.png" alt="" width="52" height="52">
-              <img src="assets/app-icons/orbit-merge.png" alt="" width="52" height="52">
-            </span>
-            <span class="showcase-feature-copy"><strong>Android apps &amp; games</strong><small>Browse our Android projects</small></span>
-            <span class="showcase-arrow" aria-hidden="true">↓</span>
-          </a>
-          <a class="showcase-example" href="services/">
-            <svg class="icon" aria-hidden="true"><use href="#i-globe"></use></svg>
-            <span><strong>Service catalog</strong><small>Websites and custom software</small></span>
-            <span class="showcase-arrow" aria-hidden="true">↗</span>
-          </a>
-        </div>
-      </div>
+      <section class="released-apps" id="android-apps" aria-labelledby="android-apps-title">
+        <h2 id="android-apps-title">Android apps &amp; games</h2>
+        <ul class="released-apps-grid" role="list">
+          <li>
+            <a href="https://play.google.com/store/apps/details?id=com.gravitile.game">
+              <img src="assets/app-icons/gravitile.png" width="64" height="64" alt="">
+              <strong>Gravitile</strong>
+              <small>Tile puzzles</small>
+            </a>
+          </li>
+          <li>
+            <a href="https://play.google.com/store/apps/details?id=com.deepvein.miner">
+              <img src="assets/deep-vein-icon.webp" width="64" height="64" alt="">
+              <strong>Deep Vein</strong>
+              <small>Mining &amp; crafting</small>
+            </a>
+          </li>
+          <li>
+            <a href="https://play.google.com/store/apps/details?id=com.myfinancialapp.mfapp">
+              <img src="assets/mfapp-icon.png" width="64" height="64" alt="">
+              <strong>My Financial App</strong>
+              <small>Budget tracking</small>
+            </a>
+          </li>
+        </ul>
+      </section>
     </section>
 
 
@@ -189,15 +200,9 @@
       <h2 id="app-support-title">App support</h2>
       <p>Choose your app below for help or to report a bug. Include your app version and device model if you can.</p>
       <ul class="app-support-grid" role="list">
-        <li><div class="app-support-identity"><img src="assets/mfapp-icon.png" width="48" height="48" alt="" loading="lazy"><div><h3>My Financial App</h3><p>Track budgets, accounts and spending on your device.</p></div></div><a class="app-support-email" href="mailto:myfinancialapp@5do12.de">myfinancialapp@5do12.de</a><div class="app-support-docs"><a href="https://play.google.com/store/apps/details?id=com.myfinancialapp.mfapp" aria-label="My Financial App · Google Play">Google Play</a><a href="my-financial-app-terms.html" aria-label="My Financial App · Terms">Terms</a><a href="my-financial-app-privacy.html" aria-label="My Financial App · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/life-vault.png" width="48" height="48" alt="" loading="lazy"><div><h3>Life Vault</h3><p>Manage documents, contracts and reminders.</p></div></div><a class="app-support-email" href="mailto:lifevault@5do12.de">lifevault@5do12.de</a><div class="app-support-docs"><a href="life-vault-terms.html" aria-label="Life Vault · Terms">Terms</a><a href="life-vault-privacy.html" aria-label="Life Vault · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/anchorfall.png" width="48" height="48" alt="" loading="lazy"><div><h3>Anchorfall: Gravity Puzzle</h3><p>Solve puzzles by placing blocks and shifting gravity.</p></div></div><a class="app-support-email" href="mailto:anchorfall@5do12.de">anchorfall@5do12.de</a><div class="app-support-docs"><a href="anchorfall-privacy-policy.html" aria-label="Anchorfall: Gravity Puzzle · Privacy">Privacy</a></div></li>
+        <li id="gravitile"><div class="app-support-identity"><img src="assets/app-icons/gravitile.png" width="48" height="48" alt="" loading="lazy"><div><h3>Gravitile</h3><p>Play tile puzzles and build up your village.</p></div></div><a class="app-support-email" href="mailto:gravitile@5do12.de">gravitile@5do12.de</a><div class="app-support-docs"><a href="https://play.google.com/store/apps/details?id=com.gravitile.game" aria-label="Gravitile · Google Play">Google Play</a><a href="gravitile-terms.html" aria-label="Gravitile · Terms">Terms</a><a href="gravitile-privacy.html" aria-label="Gravitile · Privacy">Privacy</a></div></li>
         <li><div class="app-support-identity"><img src="assets/deep-vein-icon.webp" width="48" height="48" alt="" loading="lazy"><div><h3>Deep Vein</h3><p>Mine underground, craft equipment and explore.</p></div></div><a class="app-support-email" href="mailto:deepvein@5do12.de">deepvein@5do12.de</a><div class="app-support-docs"><a href="https://play.google.com/store/apps/details?id=com.deepvein.miner" aria-label="Deep Vein · Google Play">Google Play</a><a href="deep-vein-terms.html" aria-label="Deep Vein · Terms">Terms</a><a href="deep-vein-privacy.html" aria-label="Deep Vein · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/gravitile.png" width="48" height="48" alt="" loading="lazy"><div><h3>Gravitile</h3><p>Play tile puzzles and build up your village.</p></div></div><a class="app-support-email" href="mailto:gravitile@5do12.de">gravitile@5do12.de</a><div class="app-support-docs"><a href="gravitile-terms.html" aria-label="Gravitile · Terms">Terms</a><a href="gravitile-privacy.html" aria-label="Gravitile · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/gravity-flip-rooms.png" width="48" height="48" alt="" loading="lazy"><div><h3>Gravity Flip Rooms</h3><p>Flip gravity to find your way through puzzle rooms.</p></div></div><a class="app-support-email" href="mailto:gravityfliprooms@5do12.de">gravityfliprooms@5do12.de</a><div class="app-support-docs"><a href="gravity-flip-rooms-privacy-policy.html" aria-label="Gravity Flip Rooms · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/orbit-merge.png" width="48" height="48" alt="" loading="lazy"><div><h3>Orbit Merge</h3><p>Merge planets and play daily puzzles.</p></div></div><a class="app-support-email" href="mailto:orbitmerge@5do12.de">orbitmerge@5do12.de</a><div class="app-support-docs"><a href="orbit-merge-privacy.html" aria-label="Orbit Merge · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/pieceloom.png" width="48" height="48" alt="" loading="lazy"><div><h3>Pieceloom</h3><p>Fit pieces on a board and build your best score.</p></div></div><a class="app-support-email" href="mailto:pieceloom@5do12.de">pieceloom@5do12.de</a><div class="app-support-docs"><a href="pieceloom-privacy.html" aria-label="Pieceloom · Privacy">Privacy</a></div></li>
-        <li><div class="app-support-identity"><img src="assets/app-icons/pocket-avalanche.png" width="48" height="48" alt="" loading="lazy"><div><h3>Pocket Avalanche</h3><p>A casual Android game with scores and achievements.</p></div></div><a class="app-support-email" href="mailto:pocketavalanche@5do12.de">pocketavalanche@5do12.de</a><div class="app-support-docs"><a href="pocket-avalanche-privacy.html" aria-label="Pocket Avalanche · Privacy">Privacy</a></div></li>
+        <li><div class="app-support-identity"><img src="assets/mfapp-icon.png" width="48" height="48" alt="" loading="lazy"><div><h3>My Financial App</h3><p>Track budgets, accounts and spending on your device.</p></div></div><a class="app-support-email" href="mailto:myfinancialapp@5do12.de">myfinancialapp@5do12.de</a><div class="app-support-docs"><a href="https://play.google.com/store/apps/details?id=com.myfinancialapp.mfapp" aria-label="My Financial App · Google Play">Google Play</a><a href="my-financial-app-terms.html" aria-label="My Financial App · Terms">Terms</a><a href="my-financial-app-privacy.html" aria-label="My Financial App · Privacy">Privacy</a></div></li>
       </ul>
     </section>
 
@@ -209,7 +214,7 @@
 
     <section class="closing-section wrap"><span class="little-spark" aria-hidden="true">✳</span><p>Small steps.<br><em>Real progress.</em></p><a class="text-link" href="#top">Back to the beginning <span aria-hidden="true">↑</span></a></section>
   </main>
-  <footer class="footer"><div class="wrap"><div class="footer-main"><div><a class="brand" href="./" aria-label="5do12 home"><span class="brand-mark" aria-hidden="true"></span><span>5do12</span></a><p>Web. Android. Windows.<br>Ideas brought to life.</p></div><nav aria-label="Explore"><span class="footer-label">EXPLORE</span><a href="#services">What we build</a><a href="services/">Service catalog</a><a href="games/">Online Games</a><a href="wallpapers/">Wallpapers</a><a href="#app">My Financial App</a><a href="#deep-vein">Deep Vein</a><a href="#studio">Our story</a><a href="#support">Support the journey</a><a href="contact/">Project enquiry</a></nav><nav aria-label="App information"><span class="footer-label">APP INFORMATION</span><a href="#app-support">App support</a><a href="https://play.google.com/store/apps/details?id=com.myfinancialapp.mfapp" target="_blank" rel="noopener noreferrer">Google Play ↗</a><a href="my-financial-app-terms.html">My Financial App terms</a><a href="deep-vein-terms.html">Deep Vein terms</a><a href="terms.html">All app terms</a><a href="gravity-flip-rooms-privacy-policy.html">Gravity Flip Rooms privacy</a></nav><nav aria-label="Legal"><span class="footer-label">THE IMPORTANT DETAILS</span><a href="impressum.html" lang="de">Impressum <small>(draft)</small></a><a href="datenschutz.html" lang="de">Datenschutz <small>(draft)</small></a><a href="my-financial-app-privacy.html">MFApp privacy notice ↗</a></nav></div><details class="visit-counter" id="traffic" data-visit-counter hidden>
+  <footer class="footer"><div class="wrap"><div class="footer-main"><div><a class="brand" href="./" aria-label="5do12 home"><span class="brand-mark" aria-hidden="true"></span><span>5do12</span></a><p>Web. Android. Windows.<br>Ideas brought to life.</p></div><nav aria-label="Explore"><span class="footer-label">EXPLORE</span><a href="#services">What we build</a><a href="services/">Service catalog</a><a href="games/">Online Games</a><a href="wallpapers/">Wallpapers</a><a href="#app">My Financial App</a><a href="#deep-vein">Deep Vein</a><a href="#studio">Our story</a><a href="#support">Support the journey</a><a href="contact/">Project enquiry</a></nav><nav aria-label="App information"><span class="footer-label">APP INFORMATION</span><a href="#app-support">App support</a><a href="https://play.google.com/store/apps/details?id=com.myfinancialapp.mfapp" target="_blank" rel="noopener noreferrer">Google Play ↗</a><a href="my-financial-app-terms.html">My Financial App terms</a><a href="deep-vein-terms.html">Deep Vein terms</a><a href="terms.html">All app terms</a></nav><nav aria-label="Legal"><span class="footer-label">THE IMPORTANT DETAILS</span><a href="impressum.html" lang="de">Impressum <small>(draft)</small></a><a href="datenschutz.html" lang="de">Datenschutz <small>(draft)</small></a><a href="my-financial-app-privacy.html">MFApp privacy notice ↗</a></nav></div><details class="visit-counter" id="traffic" data-visit-counter hidden>
   <summary>Traffic</summary>
   <div class="visit-counter-panel">
     <form autocomplete="off">
